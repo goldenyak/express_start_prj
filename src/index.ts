@@ -7,11 +7,11 @@ app.get('/', (req: any, res: any) => {
 })
 
 app.get('/profile', (req: any, res: any) => {
-    res.send('Hello Egor!!!')
+    res.send('Hello Egor!')
 })
 
 app.get('/user', (req: any, res: any) => {
-    res.send('Hello User!!!')
+    res.send('Hello User!')
 })
 
 app.listen(port, () => {

@@ -4,6 +4,10 @@
   "main": "index.js",
   "author": "Egor Yakovlev",
   "license": "MIT",
+  "scripts": {
+    "watch": "tsc -w",
+    "dev": "nodemon --inspect dist/index.js"
+  },
   "dependencies": {
     "express": "^4.18.1"
   },
