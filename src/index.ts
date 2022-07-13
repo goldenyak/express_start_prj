@@ -1,16 +1,16 @@
-const express = require('express')
+import express, {Request, Response} from "express";
 const app = express()
 const port = 3000
 
-app.get('/', (req: any, res: any) => {
+app.get('/', (req: Request, res: Response) => {
     res.send('Hello World!')
 })
 
-app.get('/profile', (req: any, res: any) => {
+app.get('/profile', (req: Request, res: Response) => {
     res.send('Hello Egor!')
 })
 
-app.get('/user', (req: any, res: any) => {
+app.get('/user', (req: Request, res: Response) => {
     res.send('Hello User!')
 })
 
