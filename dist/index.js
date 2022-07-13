@@ -9,9 +9,6 @@ const port = 3000;
 app.get('/', (req, res) => {
     res.send('Hello World!');
 });
-app.get('/profile', (req, res) => {
-    res.send('Hello Egor!');
-});
 app.get('/user', (req, res) => {
     res.send('Hello User!');
 });

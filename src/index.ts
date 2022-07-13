@@ -6,10 +6,6 @@ app.get('/', (req: Request, res: Response) => {
     res.send('Hello World!')
 })
 
-app.get('/profile', (req: Request, res: Response) => {
-    res.send('Hello Egor!')
-})
-
 app.get('/user', (req: Request, res: Response) => {
     res.send('Hello User!')
 })
