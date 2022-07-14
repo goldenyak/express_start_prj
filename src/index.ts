@@ -24,41 +24,59 @@ app.get('/videos/:videoId', (req: Request, res: Response) => {
     // const id = +req.params.videoId;
     let videoById = videos.find(el => el.id === +req.params.videoId)
     if (videoById) {
-        res.send(videoById)
+        res.status(200).send(videoById)
     } else {
         res.send(404)
     }
 })
 app.post('/videos', (req: Request, res: Response) => {
+    const title = req.body.title
+    if (!title || !title.trim() || title.length > 40) {
+        res.status(400).send({
+            "errorsMessages": [
+                {
+                    "message": "string",
+                    "field": "string"
+                }
+            ]
+        })
+        return;
+    }
     const newVideo = {
         id: +(new Date()),
         title: req.body.title,
-        author: "it-incubator.eu"
+        author: "Egor Yakovlev"
     }
     videos.push(newVideo)
-    res.status(201).send(videos)
+    res.status(201).send(newVideo)
 })
-app.put('/videos/:id',(req: Request, res: Response)=>{
-    for ( let i = 0; i < videos.length; i++) {
+app.put('/videos/:id', (req: Request, res: Response) => {
+    for (let i = 0; i < videos.length; i++) {
         if (videos[i].id === +req.params.id) {
             videos[i].title = req.body.title
-            res.status(201).send(videos)
+            res.status(204).send(videos)
             return;
         }
     }
-    res.send(404)
+    res.status(404).send({
+        "errorsMessages": [
+            {
+                "message": "string",
+                "field": "string"
+            }
+        ]
+    })
 })
 app.delete('/videos/:id', (req: Request, res: Response) => {
     for (let i = 0; i < videos.length; i++) {
         if (videos[i].id === +req.params.id) {
             videos.splice(i, 1)
-            res.send(204)
+            res.status(204)
             return;
         }
     }
-    res.send(404)
+    res.status(404)
 })
-
 
 
 app.listen(port, () => {
