@@ -51,6 +51,19 @@ app.post('/videos', (req: Request, res: Response) => {
     res.status(201).send(newVideo)
 })
 app.put('/videos/:id', (req: Request, res: Response) => {
+    const title = req.body.title
+    if (!title || !title.trim() || title.length > 40) {
+        res.status(400).send({
+            "errorsMessages": [
+                {
+                    "message": "string",
+                    "field": "title"
+                }
+            ]
+        })
+        return;
+    }
+
     for (let i = 0; i < videos.length; i++) {
         if (videos[i].id === +req.params.id) {
             videos[i].title = req.body.title
@@ -58,14 +71,9 @@ app.put('/videos/:id', (req: Request, res: Response) => {
             return;
         }
     }
-    res.status(400).send({
-        "errorsMessages": [
-            {
-                "message": "string",
-                "field": "title"
-            }
-        ]
-    })
+
+    res.status(404)
+
 })
 app.delete('/videos/:id', (req: Request, res: Response) => {
     for (let i = 0; i < videos.length; i++) {
