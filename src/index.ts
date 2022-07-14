@@ -36,7 +36,7 @@ app.post('/videos', (req: Request, res: Response) => {
             "errorsMessages": [
                 {
                     "message": "string",
-                    "field": "string"
+                    "field": "title"
                 }
             ]
         })
@@ -54,15 +54,15 @@ app.put('/videos/:id', (req: Request, res: Response) => {
     for (let i = 0; i < videos.length; i++) {
         if (videos[i].id === +req.params.id) {
             videos[i].title = req.body.title
-            res.status(204).send(videos)
+            res.status(204).send(videos[i])
             return;
         }
     }
-    res.status(404).send({
+    res.status(400).send({
         "errorsMessages": [
             {
                 "message": "string",
-                "field": "string"
+                "field": "title"
             }
         ]
     })
