@@ -84,7 +84,10 @@ app.delete('/videos/:id', (req: Request, res: Response) => {
         }
     }
 
-    res.status(404)
+    if (!+req.params.id) {
+        res.status(404)
+        return;
+    }
 })
 
 
