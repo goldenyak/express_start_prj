@@ -67,14 +67,14 @@ app.put('/videos/:id', (req: Request, res: Response) => {
     for (let i = 0; i < videos.length; i++) {
         if (videos[i].id === +req.params.id) {
             videos[i].title = req.body.title
-            res.status(204).send(videos[i])
+            res.status(204)
             return;
         }
     }
 
     res.status(404)
-
 })
+
 app.delete('/videos/:id', (req: Request, res: Response) => {
     for (let i = 0; i < videos.length; i++) {
         if (videos[i].id === +req.params.id) {
@@ -83,6 +83,7 @@ app.delete('/videos/:id', (req: Request, res: Response) => {
             return;
         }
     }
+
     res.status(404)
 })
 
