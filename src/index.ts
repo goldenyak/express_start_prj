@@ -24,7 +24,7 @@ app.get('/videos/:videoId', (req: Request, res: Response) => {
     // const id = +req.params.videoId;
     let videoById = videos.find(el => el.id === +req.params.videoId)
     if (videoById) {
-        res.send(`${videoById.title}`)
+        res.send(videoById)
     } else {
         res.send(404)
     }
