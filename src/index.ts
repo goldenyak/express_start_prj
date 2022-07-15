@@ -1,7 +1,6 @@
 import express, {Request, Response} from "express";
 import cors from 'cors';
 import bodyParser from "body-parser";
-import {type} from "os";
 
 const app = express();
 app.use(cors());
@@ -136,8 +135,11 @@ app.get('/bloggers/:id', (req: Request, res: Response) => {
     res.sendStatus(404);
 })
 app.post('/bloggers', (req: Request, res: Response) => {
+// ^https:\/\/([a-zA-Z0-9_-]+\.)+[a-zA-Z0-9_-]+(\/[a-zA-Z0-9_-]+)*\/?$
+    const pattern = /^https:\/\/([a-zA-Z0-9_-]+\.)+[a-zA-Z0-9_-]+(\/[a-zA-Z0-9_-]+)*\/?$/
     const name = req.body.name
     const youtubeUrl = req.body.youtubeUrl
+
     if (!name || !name.trim() || name.length > 15) {
         res.status(400).send({
             "errorsMessages": [
@@ -160,6 +162,18 @@ app.post('/bloggers', (req: Request, res: Response) => {
         })
         return;
     }
+    if (!pattern.test(youtubeUrl)) {
+        res.status(400).send({
+            "errorsMessages": [
+                {
+                    "message": "string",
+                    "field": "youtubeUrl"
+                }
+            ]
+        })
+        return;
+    }
+
     const newBlogger = {
         id: +(new Date()),
         name: req.body.name,
@@ -240,7 +254,7 @@ app.post('/posts', (req: Request, res: Response) => {
     const {title, shortDescription, content, bloggerId} = req.body
     const foundBloggerId = bloggers.find(el => el.id === bloggerId)
 
-    if(!foundBloggerId) {
+    if (!foundBloggerId) {
         res.status(400).send({
             "errorsMessages": [
                 {
