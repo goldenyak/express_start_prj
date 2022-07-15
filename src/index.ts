@@ -135,32 +135,31 @@ app.get('/bloggers/:id', (req: Request, res: Response) => {
     res.sendStatus(404);
 })
 app.post('/bloggers', (req: Request, res: Response) => {
-// ^https:\/\/([a-zA-Z0-9_-]+\.)+[a-zA-Z0-9_-]+(\/[a-zA-Z0-9_-]+)*\/?$
-    const pattern = /^https:\/\/([a-zA-Z0-9_-]+\.)+[a-zA-Z0-9_-]+(\/[a-zA-Z0-9_-]+)*\/?$/
+    // const pattern = /^https:\/\/([a-zA-Z0-9_-]+\.)+[a-zA-Z0-9_-]+(\/[a-zA-Z0-9_-]+)*\/?$/
     const name = req.body.name
     const youtubeUrl = req.body.youtubeUrl
     const errorsMessages: any = {
         "errorsMessages": []
     };
 
-    if (!name || !name.trim() || name.length > 15) {
+    if (!name || !name.match('[Aa-zZ]+') || name.length > 15) {
         errorsMessages.errorsMessages.push({
             "message": "name incorrect",
             "field": "name"
         })
     }
-    if (!youtubeUrl || !youtubeUrl.trim() || youtubeUrl.length > 100) {
+    if (!youtubeUrl || youtubeUrl.length > 100 || !youtubeUrl.match('^https:\/\/([a-zA-Z0-9_-]+\.)+[a-zA-Z0-9_-]+(\/[a-zA-Z0-9_-]+)*\/?$')) {
         errorsMessages.errorsMessages.push({
             "message": "youtubeUrl incorrect",
             "field": "youtubeUrl"
         })
     }
-    if (!pattern.test(youtubeUrl)) {
-        errorsMessages.errorsMessages.push({
-            "message": "youtubeUrl incorrect",
-            "field": "youtubeUrl"
-        })
-    }
+    // if (!pattern.test(youtubeUrl)) {
+    //     errorsMessages.errorsMessages.push({
+    //         "message": "youtubeUrl incorrect",
+    //         "field": "youtubeUrl"
+    //     })
+    // }
 
     if (errorsMessages.errorsMessages.length > 0) {
         res.status(400).json(errorsMessages)
@@ -214,7 +213,7 @@ app.put('/bloggers/:id', (req: Request, res: Response) => {
     for (let i = 0; i < bloggers.length; i++) {
         if (bloggers[i].id === +req.params.id) {
             bloggers[i].name = req.body.name
-            bloggers[i].youtubeUrl = req.body.youtubeUrl
+            bloggers[i].youtubeUrl = newYoutubeUrl
             res.sendStatus(204)
             return;
         }
@@ -331,7 +330,7 @@ app.put('/posts/:id', (req: Request, res: Response) => {
         return;
     }
 
-    if (!title || title.length > 30) {
+    if (!title || !title.match('[Aa-zZ]+') || title.length > 30) {
         errorsMessages.errorsMessages.push({
             "message": "title incorrect",
             "field": "title"
