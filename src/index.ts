@@ -131,18 +131,30 @@ app.get('/bloggers/:id', (req: Request, res: Response) => {
     let bloggerById = bloggers.find(el => el.id === +req.params.id)
     if (bloggerById) {
         res.status(200).send(bloggerById)
-    } else {
-        res.sendStatus(404)
+        return;
     }
+    res.sendStatus(404);
 })
 app.post('/bloggers', (req: Request, res: Response) => {
-    const title = req.body.title
-    if (!title || !title.trim() || title.length > 40) {
+    const name = req.body.name
+    const youtubeUrl = req.body.youtubeUrl
+    if (!name || !name.trim() || name.length > 15) {
         res.status(400).send({
             "errorsMessages": [
                 {
                     "message": "string",
-                    "field": "title"
+                    "field": "name"
+                }
+            ]
+        })
+        return;
+    }
+    if (!youtubeUrl || !youtubeUrl.trim() || youtubeUrl.length > 100) {
+        res.status(400).send({
+            "errorsMessages": [
+                {
+                    "message": "string",
+                    "field": "youtubeUrl"
                 }
             ]
         })
@@ -150,8 +162,8 @@ app.post('/bloggers', (req: Request, res: Response) => {
     }
     const newBlogger = {
         id: +(new Date()),
-        name: req.body.title,
-        youtubeUrl: "link for new blogger"
+        name: req.body.name,
+        youtubeUrl: req.body.youtubeUrl
     }
     bloggers.push(newBlogger)
     res.status(201).send(newBlogger)
