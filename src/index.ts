@@ -162,9 +162,11 @@ app.post('/bloggers', (req: Request, res: Response) => {
         })
     }
 
-    if (errorsMessages.length !== 0) {
-        res.sendStatus(400).send(errorsMessages)
-        return;
+    if (errorsMessages.errorsMessages.length > 0) {
+        res.status(400).json(errorsMessages)
+        res.end()
+        errorsMessages.errorsMessages = []
+        return
     }
 
     const newBlogger = {
@@ -202,9 +204,11 @@ app.put('/bloggers/:id', (req: Request, res: Response) => {
         })
     }
 
-    if (errorsMessages.length !== 0) {
-        res.sendStatus(400).send(errorsMessages)
-        return;
+    if (errorsMessages.errorsMessages.length > 0) {
+        res.status(400).json(errorsMessages)
+        res.end()
+        errorsMessages.errorsMessages = []
+        return
     }
 
     for (let i = 0; i < bloggers.length; i++) {
@@ -290,9 +294,11 @@ app.post('/posts', (req: Request, res: Response) => {
         })
     }
 
-    if (errorsMessages.length !== 0) {
-        res.sendStatus(400).send(errorsMessages)
-        return;
+    if (errorsMessages.errorsMessages.length > 0) {
+        res.status(400).json(errorsMessages)
+        res.end()
+        errorsMessages.errorsMessages = []
+        return
     }
 
     const newPost = {
@@ -350,10 +356,16 @@ app.put('/posts/:id', (req: Request, res: Response) => {
         })
     }
 
-    if (errorsMessages.length !== 0) {
-        res.sendStatus(400).send(errorsMessages)
-        return;
+    if (errorsMessages.errorsMessages.length > 0) {
+        res.status(400).json(errorsMessages)
+        res.end()
+        errorsMessages.errorsMessages = []
+        return
     }
+    // if (errorsMessages.length !== 0) {
+    //     res.sendStatus(400).send(errorsMessages)
+    //     return;
+    // }
 
     if (foundPost) {
         foundPost.title = title
