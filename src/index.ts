@@ -239,6 +239,19 @@ app.get('/posts/:id', (req: Request, res: Response) => {
 app.post('/posts', (req: Request, res: Response) => {
     const {title, shortDescription, content, bloggerId, bloggerName} = req.body
     const {id} = req.params
+    const foundBloggerId = bloggers.find(el => el.id === bloggerId)
+
+    if(!foundBloggerId) {
+        res.status(400).send({
+            "errorsMessages": [
+                {
+                    "message": "string",
+                    "field": "bloggerId"
+                }
+            ]
+        })
+        return;
+    }
 
     if (!title || !title.trim() || title.length > 30) {
         res.status(400).send({
