@@ -49,6 +49,10 @@ const posts = [
     }
 ]
 
+const errorsMessages: any = {
+    "errorsMessages": []
+};
+
 // videos API
 app.get('/videos', (req: Request, res: Response) => {
     res.send(videos)
@@ -135,12 +139,8 @@ app.get('/bloggers/:id', (req: Request, res: Response) => {
     res.sendStatus(404);
 })
 app.post('/bloggers', (req: Request, res: Response) => {
-    // const pattern = /^https:\/\/([a-zA-Z0-9_-]+\.)+[a-zA-Z0-9_-]+(\/[a-zA-Z0-9_-]+)*\/?$/
     const name = req.body.name
     const youtubeUrl = req.body.youtubeUrl
-    const errorsMessages: any = {
-        "errorsMessages": []
-    };
 
     if (!name || !name.match('[Aa-zZ]+') || name.length > 15) {
         errorsMessages.errorsMessages.push({
@@ -154,12 +154,6 @@ app.post('/bloggers', (req: Request, res: Response) => {
             "field": "youtubeUrl"
         })
     }
-    // if (!pattern.test(youtubeUrl)) {
-    //     errorsMessages.errorsMessages.push({
-    //         "message": "youtubeUrl incorrect",
-    //         "field": "youtubeUrl"
-    //     })
-    // }
 
     if (errorsMessages.errorsMessages.length > 0) {
         res.status(400).json(errorsMessages)
@@ -170,7 +164,7 @@ app.post('/bloggers', (req: Request, res: Response) => {
 
     const newBlogger = {
         id: +(new Date()),
-        name: req.body.name,
+        name: name,
         youtubeUrl: req.body.youtubeUrl
     }
     bloggers.push(newBlogger)
@@ -180,9 +174,6 @@ app.put('/bloggers/:id', (req: Request, res: Response) => {
     const pattern = /^https:\/\/([a-zA-Z0-9_-]+\.)+[a-zA-Z0-9_-]+(\/[a-zA-Z0-9_-]+)*\/?$/
     const newName = req.body.name
     const newYoutubeUrl = req.body.youtubeUrl
-    const errorsMessages: any = {
-        "errorsMessages": []
-    };
 
     if (!newName || !newName.trim() || newName.length > 15) {
         errorsMessages.errorsMessages.push({
@@ -255,9 +246,6 @@ app.get('/posts/:id', (req: Request, res: Response) => {
 app.post('/posts', (req: Request, res: Response) => {
     const {title, shortDescription, content, bloggerId} = req.body
     const foundBloggerId = bloggers.find(el => el.id === bloggerId)
-    const errorsMessages: any = {
-        "errorsMessages": []
-    };
 
     if (!foundBloggerId) {
         res.status(400).send({
@@ -314,9 +302,6 @@ app.post('/posts', (req: Request, res: Response) => {
 app.put('/posts/:id', (req: Request, res: Response) => {
     const {title, shortDescription, content, bloggerId} = req.body
     const {id} = req.params
-    const errorsMessages: any = {
-        "errorsMessages": []
-    };
 
     const foundPost = posts.find(el => el.id === +id)
     if (!foundPost) {
