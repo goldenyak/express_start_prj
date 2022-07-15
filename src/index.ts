@@ -175,19 +175,13 @@ app.put('/bloggers/:id', (req: Request, res: Response) => {
     const newName = req.body.name
     const newYoutubeUrl = req.body.youtubeUrl
 
-    if (!newName || !newName.trim() || newName.length > 15) {
+    if (!newName || !newName.match('[Aa-zZ]+') || newName.length > 15) {
         errorsMessages.errorsMessages.push({
             "message": "name incorrect",
             "field": "name"
         })
     }
-    if (!newYoutubeUrl || !newYoutubeUrl.trim() || newYoutubeUrl.length > 100) {
-        errorsMessages.errorsMessages.push({
-            "message": "youtubeUrl incorrect",
-            "field": "youtubeUrl"
-        })
-    }
-    if (!pattern.test(newYoutubeUrl)) {
+    if (!newYoutubeUrl || !newYoutubeUrl.trim() || newYoutubeUrl.length > 100 || !newYoutubeUrl.match('^https:\/\/([a-zA-Z0-9_-]+\.)+[a-zA-Z0-9_-]+(\/[a-zA-Z0-9_-]+)*\/?$')) {
         errorsMessages.errorsMessages.push({
             "message": "youtubeUrl incorrect",
             "field": "youtubeUrl"
@@ -321,13 +315,13 @@ app.put('/posts/:id', (req: Request, res: Response) => {
             "field": "title"
         })
     }
-    if (!shortDescription || shortDescription.length > 100) {
+    if (!shortDescription || !shortDescription.match('[Aa-zZ]+') || shortDescription.length > 100) {
         errorsMessages.errorsMessages.push({
             "message": "shortDescription incorrect",
             "field": "shortDescription"
         })
     }
-    if (!content || content.length > 1000) {
+    if (!content || !content.match('[Aa-zZ]+') || content.length > 1000) {
         errorsMessages.errorsMessages.push({
             "message": "content incorrect",
             "field": "content"
