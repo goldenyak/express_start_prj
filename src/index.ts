@@ -237,8 +237,7 @@ app.get('/posts/:id', (req: Request, res: Response) => {
     res.sendStatus(404);
 })
 app.post('/posts', (req: Request, res: Response) => {
-    const {title, shortDescription, content, bloggerId, bloggerName} = req.body
-    const {id} = req.params
+    const {title, shortDescription, content, bloggerId} = req.body
     const foundBloggerId = bloggers.find(el => el.id === bloggerId)
 
     if(!foundBloggerId) {
@@ -252,7 +251,6 @@ app.post('/posts', (req: Request, res: Response) => {
         })
         return;
     }
-
     if (!title || !title.trim() || title.length > 30) {
         res.status(400).send({
             "errorsMessages": [
@@ -292,8 +290,8 @@ app.post('/posts', (req: Request, res: Response) => {
         title: req.body.title,
         shortDescription: req.body.shortDescription,
         content: req.body.content,
-        bloggerId: req.body.bloggerId,
-        bloggerName: req.body.bloggerName
+        bloggerId: foundBloggerId.id,
+        bloggerName: foundBloggerId.name
     }
     posts.push(newPost)
     res.status(201).send(newPost)
