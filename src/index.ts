@@ -139,38 +139,29 @@ app.post('/bloggers', (req: Request, res: Response) => {
     const pattern = /^https:\/\/([a-zA-Z0-9_-]+\.)+[a-zA-Z0-9_-]+(\/[a-zA-Z0-9_-]+)*\/?$/
     const name = req.body.name
     const youtubeUrl = req.body.youtubeUrl
+    const errorsMessages = [];
 
     if (!name || !name.trim() || name.length > 15) {
-        res.status(400).send({
-            "errorsMessages": [
-                {
-                    "message": "string",
-                    "field": "name"
-                }
-            ]
+        errorsMessages.push({
+            "message": "name incorrect",
+            "field": "name"
         })
-        return;
     }
     if (!youtubeUrl || !youtubeUrl.trim() || youtubeUrl.length > 100) {
-        res.status(400).send({
-            "errorsMessages": [
-                {
-                    "message": "string",
-                    "field": "youtubeUrl"
-                }
-            ]
+        errorsMessages.push({
+            "message": "youtubeUrl incorrect",
+            "field": "youtubeUrl"
         })
-        return;
     }
     if (!pattern.test(youtubeUrl)) {
-        res.status(400).send({
-            "errorsMessages": [
-                {
-                    "message": "string",
-                    "field": "youtubeUrl"
-                }
-            ]
+        errorsMessages.push({
+            "message": "youtubeUrl incorrect",
+            "field": "youtubeUrl"
         })
+    }
+
+    if (errorsMessages.length !== 0) {
+        res.sendStatus(400).send(errorsMessages)
         return;
     }
 
@@ -183,28 +174,32 @@ app.post('/bloggers', (req: Request, res: Response) => {
     res.status(201).send(newBlogger)
 })
 app.put('/bloggers/:id', (req: Request, res: Response) => {
+    const pattern = /^https:\/\/([a-zA-Z0-9_-]+\.)+[a-zA-Z0-9_-]+(\/[a-zA-Z0-9_-]+)*\/?$/
     const newName = req.body.name
     const newYoutubeUrl = req.body.youtubeUrl
+    const errorsMessages = [];
+
     if (!newName || !newName.trim() || newName.length > 15) {
-        res.status(400).send({
-            "errorsMessages": [
-                {
-                    "message": "string",
-                    "field": "newName incorrect"
-                }
-            ]
+        errorsMessages.push({
+            "message": "name incorrect",
+            "field": "name"
         })
-        return;
     }
     if (!newYoutubeUrl || !newYoutubeUrl.trim() || newYoutubeUrl.length > 100) {
-        res.status(400).send({
-            "errorsMessages": [
-                {
-                    "message": "string",
-                    "field": "newYoutubeUrl incorrect"
-                }
-            ]
+        errorsMessages.push({
+            "message": "youtubeUrl incorrect",
+            "field": "youtubeUrl"
         })
+    }
+    if (!pattern.test(newYoutubeUrl)) {
+        errorsMessages.push({
+            "message": "youtubeUrl incorrect",
+            "field": "youtubeUrl"
+        })
+    }
+
+    if (errorsMessages.length !== 0) {
+        res.sendStatus(400).send(errorsMessages)
         return;
     }
 
@@ -253,6 +248,7 @@ app.get('/posts/:id', (req: Request, res: Response) => {
 app.post('/posts', (req: Request, res: Response) => {
     const {title, shortDescription, content, bloggerId} = req.body
     const foundBloggerId = bloggers.find(el => el.id === bloggerId)
+    const errorsMessages = [];
 
     if (!foundBloggerId) {
         res.status(400).send({
@@ -264,38 +260,32 @@ app.post('/posts', (req: Request, res: Response) => {
             ]
         })
         return;
+        // errorsMessages.push({
+        //     "message": "foundBloggerId incorrect",
+        //     "field": "bloggerId"
+        // })
     }
     if (!title || !title.trim() || title.length > 30) {
-        res.status(400).send({
-            "errorsMessages": [
-                {
-                    "message": "string",
-                    "field": "title"
-                }
-            ]
+        errorsMessages.push({
+            "message": "title incorrect",
+            "field": "title"
         })
-        return;
     }
     if (!shortDescription || !shortDescription.trim() || shortDescription.length > 100) {
-        res.status(400).send({
-            "errorsMessages": [
-                {
-                    "message": "string",
-                    "field": "shortDescription"
-                }
-            ]
+        errorsMessages.push({
+            "message": "shortDescription incorrect",
+            "field": "shortDescription"
         })
-        return;
     }
     if (!content || !content.trim() || content.length > 1000) {
-        res.status(400).send({
-            "errorsMessages": [
-                {
-                    "message": "string",
-                    "field": "content"
-                }
-            ]
+        errorsMessages.push({
+            "message": "content incorrect",
+            "field": "content"
         })
+    }
+
+    if (errorsMessages.length !== 0) {
+        res.sendStatus(400).send(errorsMessages)
         return;
     }
 
@@ -313,6 +303,7 @@ app.post('/posts', (req: Request, res: Response) => {
 app.put('/posts/:id', (req: Request, res: Response) => {
     const {title, shortDescription, content, bloggerId} = req.body
     const {id} = req.params
+    const errorsMessages = [];
 
     const foundPost = posts.find(el => el.id === +id)
     if (!foundPost) {
@@ -327,44 +318,33 @@ app.put('/posts/:id', (req: Request, res: Response) => {
     }
 
     if (!title || title.length > 30) {
-        res.status(400).send({
-            "errorsMessages": [
-                {
-                    "message": "string",
-                    "field": "title incorrect"
-                }
-            ]
+        errorsMessages.push({
+            "message": "title incorrect",
+            "field": "title"
         })
     }
     if (!shortDescription || shortDescription.length > 100) {
-        res.status(400).send({
-            "errorsMessages": [
-                {
-                    "message": "string",
-                    "field": "shortDescription incorrect"
-                }
-            ]
+        errorsMessages.push({
+            "message": "shortDescription incorrect",
+            "field": "shortDescription"
         })
     }
     if (!content || content.length > 1000) {
-        res.status(400).send({
-            "errorsMessages": [
-                {
-                    "message": "string",
-                    "field": "content incorrect"
-                }
-            ]
+        errorsMessages.push({
+            "message": "content incorrect",
+            "field": "content"
         })
     }
     if (!bloggerId || typeof bloggerId !== "number") {
-        res.status(400).send({
-            "errorsMessages": [
-                {
-                    "message": "string",
-                    "field": "content incorrect"
-                }
-            ]
+        errorsMessages.push({
+            "message": "bloggerId incorrect",
+            "field": "bloggerId"
         })
+    }
+
+    if (errorsMessages.length !== 0) {
+        res.sendStatus(400).send(errorsMessages)
+        return;
     }
 
     if (foundPost) {
