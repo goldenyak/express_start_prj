@@ -299,13 +299,13 @@ app.put('/posts/:id', (req: Request, res: Response) => {
 
     const foundPost = posts.find(el => el.id === +id)
     if (!foundPost) {
-        res.sendStatus(404)
+        res.sendStatus(400)
         return;
     }
 
     const foundBlogger = bloggers.find(el => el.id === +bloggerId)
     if (!foundBlogger) {
-        res.sendStatus(404)
+        res.sendStatus(400)
         return;
     }
 
