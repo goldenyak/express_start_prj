@@ -299,15 +299,15 @@ app.put('/posts/:id', (req: Request, res: Response) => {
 
     const foundPost = posts.find(el => el.id === +id)
     if (!foundPost) {
-        res.sendStatus(400)
+        res.sendStatus(404)
         return;
     }
 
-    const foundBlogger = bloggers.find(el => el.id === +bloggerId)
-    if (!foundBlogger) {
-        res.sendStatus(400)
-        return;
-    }
+    // const foundBlogger = bloggers.find(el => el.id === +bloggerId)
+    // if (!foundBlogger) {
+    //     res.sendStatus(404)
+    //     return;
+    // }
 
     if (!title || !title.match('[Aa-zZ]+') || title.length > 30) {
         errorsMessages.errorsMessages.push({
@@ -340,10 +340,6 @@ app.put('/posts/:id', (req: Request, res: Response) => {
         errorsMessages.errorsMessages = []
         return
     }
-    // if (errorsMessages.length !== 0) {
-    //     res.sendStatus(400).send(errorsMessages)
-    //     return;
-    // }
 
     if (foundPost) {
         foundPost.title = title
