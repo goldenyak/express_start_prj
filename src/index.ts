@@ -293,62 +293,111 @@ app.post('/posts', (req: Request, res: Response) => {
     posts.push(newPost)
     res.status(201).send(newPost)
 })
+// app.put('/posts/:id', (req: Request, res: Response) => {
+//     const {title, shortDescription, content, bloggerId} = req.body
+//     const {id} = req.params
+//
+//     const foundPost = posts.find(el => el.id === +id)
+//     if (!foundPost) {
+//         res.sendStatus(404)
+//         return;
+//     }
+//
+//     // const foundBlogger = bloggers.find(el => el.id === +bloggerId)
+//     // if (!foundBlogger) {
+//     //     res.sendStatus(404)
+//     //     return;
+//     // }
+//
+//     if (!title || !title.match('[Aa-zZ]+') || title.length > 30) {
+//         errorsMessages.errorsMessages.push({
+//             "message": "title incorrect",
+//             "field": "title"
+//         })
+//     }
+//     if (!shortDescription || !shortDescription.match('[Aa-zZ]+') || shortDescription.length > 100) {
+//         errorsMessages.errorsMessages.push({
+//             "message": "shortDescription incorrect",
+//             "field": "shortDescription"
+//         })
+//     }
+//     if (!content || !content.match('[Aa-zZ]+') || content.length > 1000) {
+//         errorsMessages.errorsMessages.push({
+//             "message": "content incorrect",
+//             "field": "content"
+//         })
+//     }
+//     if (!bloggerId || typeof bloggerId !== "number") {
+//         errorsMessages.errorsMessages.push({
+//             "message": "bloggerId incorrect",
+//             "field": "bloggerId"
+//         })
+//     }
+//
+//     if (errorsMessages.errorsMessages.length > 0) {
+//         res.status(400).json(errorsMessages)
+//         res.end()
+//         errorsMessages.errorsMessages = []
+//         return
+//     }
+//
+//     if (foundPost) {
+//         foundPost.title = title
+//         foundPost.shortDescription = shortDescription
+//         foundPost.content = content
+//         foundPost.bloggerId = bloggerId
+//         res.sendStatus(204).send(foundPost)
+//     }
+// })
 app.put('/posts/:id', (req: Request, res: Response) => {
     const {title, shortDescription, content, bloggerId} = req.body
-    const {id} = req.params
+    const bloggerIndex = bloggers.findIndex(item => item.id === bloggerId)
+    const postIndex = posts.findIndex(item => item.id === +req.params.id)
 
-    const foundPost = posts.find(el => el.id === +id)
-    if (!foundPost) {
-        res.sendStatus(404)
-        return;
-    }
-
-    // const foundBlogger = bloggers.find(el => el.id === +bloggerId)
-    // if (!foundBlogger) {
-    //     res.sendStatus(404)
-    //     return;
-    // }
-
-    if (!title || !title.match('[Aa-zZ]+') || title.length > 30) {
-        errorsMessages.errorsMessages.push({
-            "message": "title incorrect",
-            "field": "title"
-        })
-    }
-    if (!shortDescription || !shortDescription.match('[Aa-zZ]+') || shortDescription.length > 100) {
-        errorsMessages.errorsMessages.push({
-            "message": "shortDescription incorrect",
-            "field": "shortDescription"
-        })
-    }
-    if (!content || !content.match('[Aa-zZ]+') || content.length > 1000) {
-        errorsMessages.errorsMessages.push({
-            "message": "content incorrect",
-            "field": "content"
-        })
-    }
-    if (!bloggerId || typeof bloggerId !== "number") {
-        errorsMessages.errorsMessages.push({
-            "message": "bloggerId incorrect",
-            "field": "bloggerId"
-        })
+    if(postIndex<0) {
+        res.status(404)
+        res.end()
+        return
     }
 
-    if (errorsMessages.errorsMessages.length > 0) {
+    if(!title || title.length>30 || !title.match('[Aa-zZ]+')) {
+        errorsMessages.errorsMessages.push({ "message" : "Input error", "field": "title" })
+    }
+    if (!shortDescription || shortDescription.length>100 || !shortDescription.match('[Aa-zZ]+')) {
+        errorsMessages.errorsMessages.push({ "message" : "Input error", "field": "shortDescription" })
+    }
+    if (!content || content.length>1000 || !content.match('[Aa-zZ]+')) {
+        errorsMessages.errorsMessages.push({ "message" : "Input error", "field": "content" })
+    }
+    if (bloggerIndex<0) {
+        errorsMessages.errorsMessages.push({ "message" : "Input error", "field": "bloggerId" })
+    }
+
+    if(errorsMessages.errorsMessages.length>0) {
         res.status(400).json(errorsMessages)
         res.end()
         errorsMessages.errorsMessages = []
         return
     }
 
-    if (foundPost) {
-        foundPost.title = title
-        foundPost.shortDescription = shortDescription
-        foundPost.content = content
-        foundPost.bloggerId = bloggerId
-        res.sendStatus(204).send(foundPost)
+    const newPost = {
+        "id": +(new Date()),
+        "title": title,
+        "shortDescription": shortDescription,
+        "content": content,
+        "bloggerId": bloggerId,
+        "bloggerName": bloggers[bloggerIndex].name
+
     }
-})
+    posts[postIndex].title = title
+    posts[postIndex].shortDescription = shortDescription
+    posts[postIndex].content = content
+    posts[postIndex].bloggerId = bloggerId
+
+    res.status(204)
+    res.end()
+    }
+)
 app.delete('/posts/:id', (req: Request, res: Response) => {
     for (let i = 0; i < posts.length; i++) {
         if (posts[i].id === +req.params.id) {
