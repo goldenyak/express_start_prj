@@ -1,5 +1,6 @@
 import {Request, Response, Router} from 'express'
 import {videos} from "../repositories/db";
+import {videosRepository} from "../repositories/videos-repository";
 
 // put here array with videos
 export const videosRouter = Router({})
@@ -8,13 +9,8 @@ videosRouter.get('/', (req: Request, res: Response) => {
     res.send(videos)
 })
 videosRouter.get('/:videoId', (req: Request, res: Response) => {
-    // const id = +req.params.videoId;
-    let videoById = videos.find(el => el.id === +req.params.videoId)
-    if (videoById) {
-        res.status(200).send(videoById)
-    } else {
-        res.sendStatus(404)
-    }
+    const foundVideo = videosRepository.getVideoById(+req.params.videoId)
+    return foundVideo;
 })
 videosRouter.post('/', (req: Request, res: Response) => {
     const title = req.body.title
