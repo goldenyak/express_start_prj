@@ -39,3 +39,6 @@ export const posts = [
         bloggerName: "some bloggers name"
     }
 ]
+export const errorsMessages: any = {
+    "errorsMessages": []
+};
