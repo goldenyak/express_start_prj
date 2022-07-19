@@ -44,7 +44,9 @@ bloggersRouter.post('/', (req: Request, res: Response) => {
     newBlogger && res.status(201).send(newBlogger)
 })
 bloggersRouter.put('/:id', (req: Request, res: Response) => {
-    const pattern = /^https:\/\/([a-zA-Z0-9_-]+\.)+[a-zA-Z0-9_-]+(\/[a-zA-Z0-9_-]+)*\/?$/
+    const updatedBlogger = bloggersRepository.updateBloggerById(req.body.name, req.body.youtubeUrl, +req.params.id)
+    updatedBlogger && res.sendStatus(204)
+
     const newName = req.body.name
     const newYoutubeUrl = req.body.youtubeUrl
 
@@ -68,14 +70,14 @@ bloggersRouter.put('/:id', (req: Request, res: Response) => {
         return
     }
 
-    for (let i = 0; i < bloggers.length; i++) {
-        if (bloggers[i].id === +req.params.id) {
-            bloggers[i].name = req.body.name
-            bloggers[i].youtubeUrl = newYoutubeUrl
-            res.sendStatus(204)
-            return;
-        }
-    }
+    // for (let i = 0; i < bloggers.length; i++) {
+    //     if (bloggers[i].id === +req.params.id) {
+    //         bloggers[i].name = req.body.name
+    //         bloggers[i].youtubeUrl = newYoutubeUrl
+    //         res.sendStatus(204)
+    //         return;
+    //     }
+    // }
 
     res.sendStatus(404)
 })
