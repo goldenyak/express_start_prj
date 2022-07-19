@@ -91,10 +91,13 @@ bloggersRouter.delete('/:id', (req: Request, res: Response) => {
             res.sendStatus(204)
             return;
         }
+        else {
+            res.sendStatus(404)
+        }
     }
 
-    if (bloggers.filter(el => el.id !== +req.params.id)) {
-        res.sendStatus(404)
-        return;
-    }
+    // if (bloggers.filter(el => el.id !== +req.params.id)) {
+    //     res.sendStatus(404)
+    //     return;
+    // }
 })
