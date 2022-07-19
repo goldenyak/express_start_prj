@@ -1,6 +1,5 @@
 import {Request, Response, Router} from 'express'
 import {bloggers, errorsMessages, videos} from "../repositories/db";
-import {bloggersRepository} from "../repositories/bloggers-repository";
 
 // put here array with videos
 export const bloggersRouter = Router({})
@@ -9,9 +8,9 @@ bloggersRouter.get('/', (req: Request, res: Response) => {
     res.status(200).send(bloggers)
 });
 bloggersRouter.get('/:id', (req: Request, res: Response) => {
-    const foundBlogger = bloggersRepository.getBloggerById(+req.params.id)
-    if (foundBlogger) {
-        res.status(200).send(foundBlogger)
+    let bloggerById = bloggers.find(el => el.id === +req.params.id)
+    if (bloggerById) {
+        res.status(200).send(bloggerById)
         return;
     }
     res.sendStatus(404);

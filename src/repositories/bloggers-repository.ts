@@ -4,13 +4,8 @@ export const bloggersRepository = {
     getAllBloggers() {
         return bloggers;
     },
-    getBloggerById(id: number) {
-        const bloggerById = bloggers.find(el => el.id === id)
-        if (bloggerById) {
-            return true
-        } else {
-            return false
-        }
+    getBloggerById() {
+
     },
     createNewBlogger() {
 
