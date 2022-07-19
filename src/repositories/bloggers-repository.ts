@@ -6,9 +6,7 @@ export const bloggersRepository = {
     },
     getBloggerById(id: number) {
         const bloggerById = bloggers.find(el => el.id === id)
-        if(bloggerById) {
-            return bloggerById
-        } else return bloggers
+        return bloggerById
     },
     createNewBlogger() {
 
