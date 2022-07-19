@@ -87,17 +87,14 @@ bloggersRouter.put('/:id', (req: Request, res: Response) => {
 bloggersRouter.delete('/:id', (req: Request, res: Response) => {
     for (let i = 0; i < bloggers.length; i++) {
         if (bloggers[i].id === +req.params.id) {
-            bloggers.splice(i, 1)
-            res.sendStatus(204)
+            const newBloggers = bloggers.splice(i, 1)
+            res.send(newBloggers)
             return;
-        }
-        else {
-            res.sendStatus(404)
         }
     }
 
-    // if (bloggers.filter(el => el.id !== +req.params.id)) {
-    //     res.sendStatus(404)
-    //     return;
-    // }
+    if (bloggers.filter(el => el.id !== +req.params.id)) {
+        res.sendStatus(404)
+        return;
+    }
 })
