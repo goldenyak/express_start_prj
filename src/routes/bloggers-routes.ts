@@ -85,16 +85,22 @@ bloggersRouter.put('/:id', (req: Request, res: Response) => {
     res.sendStatus(404)
 })
 bloggersRouter.delete('/:id', (req: Request, res: Response) => {
-    for (let i = 0; i < bloggers.length; i++) {
-        if (bloggers[i].id === +req.params.id) {
-            const newBloggers = bloggers.splice(i, 1)
-            res.send(newBloggers)
-            return;
-        }
-    }
-
     if (bloggers.filter(el => el.id !== +req.params.id)) {
         res.sendStatus(404)
         return;
     }
+
+    const deletedBlogger = bloggersRepository.deleteBloggerById(+req.params.id)
+    deletedBlogger && res.sendStatus(204)
+
+
+    // for (let i = 0; i < bloggers.length; i++) {
+    //     if (bloggers[i].id === +req.params.id) {
+    //         bloggers.splice(i, 1)
+    //         res.sendStatus(204)
+    //         return;
+    //     }
+    // }
+
+
 })

@@ -14,7 +14,14 @@ export const bloggersRepository = {
     updateBloggerById() {
 
     },
-    deleteBloggerById() {
+    deleteBloggerById(id: number) {
+        const beforeDeliting = bloggers.length
 
+        for (let i = 0; i < bloggers.length; i++) {
+            if (bloggers[i].id === id) {
+                bloggers.splice(i, 1)
+            }
+        }
+        return beforeDeliting > bloggers.length
     }
 }
