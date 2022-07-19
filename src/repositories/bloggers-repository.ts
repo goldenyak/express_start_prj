@@ -8,8 +8,14 @@ export const bloggersRepository = {
         const bloggerById = bloggers.find(el => el.id === id)
         return bloggerById
     },
-    createNewBlogger() {
-
+    createNewBlogger(name: string, youtubeUrl: string) {
+        const newBlogger = {
+            id: +(new Date()),
+            name: name,
+            youtubeUrl: youtubeUrl
+        }
+        bloggers.push(newBlogger)
+        return newBlogger
     },
     updateBloggerById() {
 
