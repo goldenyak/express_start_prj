@@ -92,15 +92,4 @@ bloggersRouter.delete('/:id', (req: Request, res: Response) => {
         res.sendStatus(404)
         return;
     }
-
-
-    // for (let i = 0; i < bloggers.length; i++) {
-    //     if (bloggers[i].id === +req.params.id) {
-    //         bloggers.splice(i, 1)
-    //         res.sendStatus(204)
-    //         return;
-    //     }
-    // }
-
-
 })
