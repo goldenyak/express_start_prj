@@ -34,7 +34,7 @@ bloggersRouter.post('/', (req: Request, res: Response) => {
     }
 
     if (errorsMessages.errorsMessages.length > 0) {
-        res.status(401).json(errorsMessages)
+        res.status(400).json(errorsMessages)
         res.end()
         errorsMessages.errorsMessages = []
         return
@@ -61,7 +61,7 @@ bloggersRouter.put('/:id', (req: Request, res: Response) => {
     }
 
     if (errorsMessages.errorsMessages.length > 0) {
-        res.status(401).json(errorsMessages)
+        res.status(400).json(errorsMessages)
         res.end()
         errorsMessages.errorsMessages = []
         return
@@ -77,7 +77,7 @@ bloggersRouter.delete('/:id', (req: Request, res: Response) => {
     deletedBlogger && res.sendStatus(204)
 
     if (bloggers.filter(el => el.id !== +req.params.id)) {
-        res.sendStatus(401)
+        res.sendStatus(404)
         return;
     }
 })
