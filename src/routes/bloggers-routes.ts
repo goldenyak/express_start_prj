@@ -16,7 +16,7 @@ bloggersRouter.get('/', (req: Request, res: Response) => {
     res.status(200).send(bloggers)
     res.end()
 });
-bloggersRouter.get('/:id', (req: Request, res: Response) => {
+bloggersRouter.get('/:id', bloggerIdValidation, (req: Request, res: Response) => {
     const foundBlogger = bloggersRepository.getBloggerById(+req.params.id)
     if (foundBlogger) {
         res.status(200).send(foundBlogger)
@@ -57,7 +57,7 @@ bloggersRouter.post('/', authMiddleware, youtubeUrlValidation, bloggerNameValida
     //     return
     // }
 })
-bloggersRouter.put('/:id', authMiddleware, youtubeUrlValidation, bloggerNameValidation, (req: Request, res: Response) => {
+bloggersRouter.put('/:id', authMiddleware, bloggerIdValidation, youtubeUrlValidation, bloggerNameValidation, (req: Request, res: Response) => {
     const {name, youtubeUrl} = req.body
     const {id} = req.params
 
