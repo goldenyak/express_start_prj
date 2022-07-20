@@ -1,5 +1,4 @@
 import {Request, Response, Router} from 'express'
-import {bloggers, errorsMessages, videos} from "../repositories/db";
 import {bloggersRepository} from "../repositories/bloggers-repository";
 import {authMiddleware} from "../middlewares/auth-middleware";
 import {youtubeUrlValidation} from "../validation/youtube-url-validation";

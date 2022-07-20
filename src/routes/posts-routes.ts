@@ -1,195 +1,87 @@
 import {Request, Response, Router} from 'express'
-import {bloggers, errorsMessages, posts, videos} from "../repositories/db";
+import {bloggers, errorsMessages, posts} from "../repositories/db";
+import {postsRepository} from "../repositories/posts-repository";
+import {postIdValidation} from "../validation/post-id-validation";
+import {body, validationResult} from "express-validator";
+import {errorsAdapt} from "../utils";
+import {bloggersRepository} from "../repositories/bloggers-repository";
+import {authMiddleware} from "../middlewares/auth-middleware";
 
-// put here array with videos
 export const postsRouter = Router({})
 
 postsRouter.get('/', (req: Request, res: Response) => {
+    const posts = postsRepository.getAllPosts()
     res.status(200).send(posts)
+    res.end()
 });
-postsRouter.get('/:id', (req: Request, res: Response) => {
-    let postById = posts.find(el => el.id === +req.params.id)
-    if (postById) {
-        res.status(200).send(postById)
-        return;
-    }
-    if (!+req.params.id) {
-        res.sendStatus(400).send("Bad Request")
-        return;
-    }
-    res.sendStatus(404);
-})
-postsRouter.post('/', (req: Request, res: Response) => {
-    const {title, shortDescription, content, bloggerId} = req.body
-    const foundBloggerId = bloggers.find(el => el.id === bloggerId)
-
-    if (!foundBloggerId) {
-        res.status(400).send({
-            "errorsMessages": [
-                {
-                    "message": "string",
-                    "field": "bloggerId"
-                }
-            ]
-        })
-        return;
-        // errorsMessages.push({
-        //     "message": "foundBloggerId incorrect",
-        //     "field": "bloggerId"
-        // })
-    }
-    if (!title || !title.trim() || title.length > 30) {
-        errorsMessages.errorsMessages.push({
-            "message": "title incorrect",
-            "field": "title"
-        })
-    }
-    if (!shortDescription || !shortDescription.trim() || shortDescription.length > 100) {
-        errorsMessages.errorsMessages.push({
-            "message": "shortDescription incorrect",
-            "field": "shortDescription"
-        })
-    }
-    if (!content || !content.trim() || content.length > 1000) {
-        errorsMessages.errorsMessages.push({
-            "message": "content incorrect",
-            "field": "content"
-        })
-    }
-
-    if (errorsMessages.errorsMessages.length > 0) {
-        res.status(400).json(errorsMessages)
+postsRouter.get('/:id', postIdValidation, (req: Request, res: Response) => {
+    const errors = validationResult(req)
+    if (!errors.isEmpty()) {
+        res.status(400).json({"errorsMessages": errorsAdapt(errors.array({onlyFirstError: true}))})
         res.end()
-        errorsMessages.errorsMessages = []
         return
     }
+    postsRepository.getPostsById(+req.params.id)
+    res.sendStatus(200)
 
-    const newPost = {
-        id: +(new Date()),
-        title: req.body.title,
-        shortDescription: req.body.shortDescription,
-        content: req.body.content,
-        bloggerId: foundBloggerId.id,
-        bloggerName: foundBloggerId.name
-    }
-    posts.push(newPost)
-    res.status(201).send(newPost)
 })
-// app.put('/posts/:id', (req: Request, res: Response) => {
-//     const {title, shortDescription, content, bloggerId} = req.body
-//     const {id} = req.params
-//
-//     const foundPost = posts.find(el => el.id === +id)
-//     if (!foundPost) {
-//         res.sendStatus(404)
-//         return;
-//     }
-//
-//     // const foundBlogger = bloggers.find(el => el.id === +bloggerId)
-//     // if (!foundBlogger) {
-//     //     res.sendStatus(404)
-//     //     return;
-//     // }
-//
-//     if (!title || !title.match('[Aa-zZ]+') || title.length > 30) {
-//         errorsMessages.errorsMessages.push({
-//             "message": "title incorrect",
-//             "field": "title"
-//         })
-//     }
-//     if (!shortDescription || !shortDescription.match('[Aa-zZ]+') || shortDescription.length > 100) {
-//         errorsMessages.errorsMessages.push({
-//             "message": "shortDescription incorrect",
-//             "field": "shortDescription"
-//         })
-//     }
-//     if (!content || !content.match('[Aa-zZ]+') || content.length > 1000) {
-//         errorsMessages.errorsMessages.push({
-//             "message": "content incorrect",
-//             "field": "content"
-//         })
-//     }
-//     if (!bloggerId || typeof bloggerId !== "number") {
-//         errorsMessages.errorsMessages.push({
-//             "message": "bloggerId incorrect",
-//             "field": "bloggerId"
-//         })
-//     }
-//
-//     if (errorsMessages.errorsMessages.length > 0) {
-//         res.status(400).json(errorsMessages)
-//         res.end()
-//         errorsMessages.errorsMessages = []
-//         return
-//     }
-//
-//     if (foundPost) {
-//         foundPost.title = title
-//         foundPost.shortDescription = shortDescription
-//         foundPost.content = content
-//         foundPost.bloggerId = bloggerId
-//         res.sendStatus(204).send(foundPost)
-//     }
-// })
-postsRouter.put('/:id', (req: Request, res: Response) => {
-        const {title, shortDescription, content, bloggerId} = req.body
-        const bloggerIndex = bloggers.findIndex(item => item.id === bloggerId)
-        const postIndex = posts.findIndex(item => item.id === +req.params.id)
+postsRouter.post('/', authMiddleware,
+    body('title').trim().notEmpty().isLength({max: 30}),
+    body('shortDescription').trim().notEmpty().isLength({max: 100}),
+    body('content').trim().notEmpty().isLength({max: 1000}),
+    body('bloggerId').custom((value) => !!bloggersRepository.getBloggerById(value)),
+    (req: Request, res: Response) => {
 
-        if(postIndex<0) {
+        const {title, shortDescription, content, bloggerId} = req.body
+
+        const errors = validationResult(req)
+        if (!errors.isEmpty()) {
+            res.status(400).json({"errorsMessages": errorsAdapt(errors.array({onlyFirstError: true}))})
+            res.end()
+            return
+        }
+
+        const blogger = bloggersRepository.getBloggerById(bloggerId)
+        if (blogger) {
+            res.status(201).send(postsRepository.createNewPost(title, shortDescription, content, bloggerId, blogger.name))
+            res.end()
+            return
+        }
+    })
+
+postsRouter.put('/:id', authMiddleware,
+    body('title').trim().notEmpty().isLength({max: 30}),
+    body('shortDescription').trim().notEmpty().isLength({max: 100}),
+    body('content').trim().notEmpty().isLength({max: 1000}),
+    body('bloggerId').custom((value) => !!bloggersRepository.getBloggerById(value)), (req: Request, res: Response) => {
+
+        const errors = validationResult(req)
+        if (!errors.isEmpty()) {
+            res.status(400).json({"errorsMessages": errorsAdapt(errors.array({onlyFirstError: true}))})
+            res.end()
+            return
+        }
+
+        const {title, shortDescription, content, bloggerId} = req.body
+        const blogger = bloggersRepository.getBloggerById(bloggerId)
+        blogger && postsRepository.updatePostById(+req.params.id, title, shortDescription, content, bloggerId)
+        res.status(204)
+        res.end()
+    })
+
+
+postsRouter.delete('/:id', authMiddleware, postIdValidation,
+    (req: Request, res: Response) => {
+    const postById = postsRepository.getPostsById(+req.params.id)
+        if(postById) {
+            postsRepository.deletePostById(+req.params.id)
+            res.status(204)
+            res.end()
+            return
+        } else {
             res.status(404)
             res.end()
             return
         }
 
-        if(!title || title.length>30 || !title.match('[Aa-zZ]+')) {
-            errorsMessages.errorsMessages.push({ "message" : "Input error", "field": "title" })
-        }
-        if (!shortDescription || shortDescription.length>100 || !shortDescription.match('[Aa-zZ]+')) {
-            errorsMessages.errorsMessages.push({ "message" : "Input error", "field": "shortDescription" })
-        }
-        if (!content || content.length>1000 || !content.match('[Aa-zZ]+')) {
-            errorsMessages.errorsMessages.push({ "message" : "Input error", "field": "content" })
-        }
-        if (bloggerIndex<0) {
-            errorsMessages.errorsMessages.push({ "message" : "Input error", "field": "bloggerId" })
-        }
-
-        if(errorsMessages.errorsMessages.length>0) {
-            res.status(400).json(errorsMessages)
-            res.end()
-            errorsMessages.errorsMessages = []
-            return
-        }
-
-        const newPost = {
-            "id": +(new Date()),
-            "title": title,
-            "shortDescription": shortDescription,
-            "content": content,
-            "bloggerId": bloggerId,
-            "bloggerName": bloggers[bloggerIndex].name
-
-        }
-        posts[postIndex].title = title
-        posts[postIndex].shortDescription = shortDescription
-        posts[postIndex].content = content
-        posts[postIndex].bloggerId = bloggerId
-
-        res.status(204)
-        res.end()
-    })
-postsRouter.delete('/:id', (req: Request, res: Response) => {
-    for (let i = 0; i < posts.length; i++) {
-        if (posts[i].id === +req.params.id) {
-            posts.splice(i, 1)
-            res.sendStatus(204)
-            return;
-        }
-    }
-
-    if (posts.filter(el => el.id !== +req.params.id)) {
-        res.sendStatus(404)
-        return;
-    }
 })
