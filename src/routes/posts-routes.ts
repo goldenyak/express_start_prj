@@ -27,7 +27,7 @@ postsRouter.get('/:id', postIdValidation, (req: Request, res: Response) => {
 
 })
 
-postsRouter.post('/', authMiddleware, postIdValidation,
+postsRouter.post('/', authMiddleware,
     body('title').trim().notEmpty().isLength({max: 30}),
     body('shortDescription').trim().notEmpty().isLength({max: 100}),
     body('content').trim().notEmpty().isLength({max: 1000}),
