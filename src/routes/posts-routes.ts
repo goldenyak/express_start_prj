@@ -22,7 +22,7 @@ postsRouter.get('/:id', postIdValidation, (req: Request, res: Response) => {
         return
     }
     const postById = postsRepository.getPostsById(+req.params.id)
-    res.sendStatus(200).send(postById)
+    res.status(200).send(postById)
 
 })
 
