@@ -79,13 +79,8 @@ bloggersRouter.delete('/:id', authMiddleware, (req: Request, res: Response) => {
         return;
     }
 
-    const deletedBlogger = bloggersRepository.deleteBloggerById(+req.params.id)
-    deletedBlogger && res.sendStatus(204)
-
-    const errors = validationResult(req)
-    if (!errors.isEmpty()) {
-        res.status(400).send({"errorsMessages": errorsAdapt(errors.array({onlyFirstError: true}))})
-        res.end()
-        return
-    }
+    bloggersRepository.deleteBloggerById(+req.params.id)
+    res.sendStatus(204)
+    res.end()
+    return;
 })

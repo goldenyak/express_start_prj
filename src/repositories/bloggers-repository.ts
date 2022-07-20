@@ -28,13 +28,7 @@ export const bloggersRepository = {
         return updatedBlogger
     },
     deleteBloggerById(id: number) {
-        const beforeDeliting = bloggers.length
-
-        for (let i = 0; i < bloggers.length; i++) {
-            if (bloggers[i].id === id) {
-                bloggers.splice(i, 1)
-            }
-        }
-        return beforeDeliting > bloggers.length
+        bloggers.splice(bloggers.findIndex(item => item.id === id), 1)
+        return
     }
 }
