@@ -15,7 +15,7 @@ bloggersRouter.get('/', (req: Request, res: Response) => {
     res.status(200).send(bloggers)
     res.end()
 });
-bloggersRouter.get('/:id', authMiddleware, (req: Request, res: Response) => {
+bloggersRouter.get('/:id', (req: Request, res: Response) => {
     const foundBlogger = bloggersRepository.getBloggerById(+req.params.id)
     if (foundBlogger) {
         res.status(200).send(foundBlogger)
