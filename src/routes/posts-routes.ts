@@ -21,10 +21,11 @@ postsRouter.get('/:id', postIdValidation, (req: Request, res: Response) => {
         res.end()
         return
     }
-    postsRepository.getPostsById(+req.params.id)
-    res.sendStatus(200)
+    const postById = postsRepository.getPostsById(+req.params.id)
+    res.sendStatus(200).send(postById)
 
 })
+
 postsRouter.post('/', authMiddleware,
     body('title').trim().notEmpty().isLength({max: 30}),
     body('shortDescription').trim().notEmpty().isLength({max: 100}),
