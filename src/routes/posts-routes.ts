@@ -27,7 +27,7 @@ postsRouter.get('/:id', postIdValidation, (req: Request, res: Response) => {
 
 })
 
-postsRouter.post('/', authMiddleware,
+postsRouter.post('/', authMiddleware, postIdValidation,
     body('title').trim().notEmpty().isLength({max: 30}),
     body('shortDescription').trim().notEmpty().isLength({max: 100}),
     body('content').trim().notEmpty().isLength({max: 1000}),
@@ -51,7 +51,7 @@ postsRouter.post('/', authMiddleware,
         }
     })
 
-postsRouter.put('/:id', authMiddleware,
+postsRouter.put('/:id', authMiddleware, postIdValidation,
     body('title').trim().notEmpty().isLength({max: 30}),
     body('shortDescription').trim().notEmpty().isLength({max: 100}),
     body('content').trim().notEmpty().isLength({max: 1000}),
