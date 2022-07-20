@@ -5,8 +5,8 @@ export const bloggersRepository = {
         return bloggers;
     },
     getBloggerById(id: number) {
-        const bloggerById = bloggers.find(el => el.id === id)
-        return bloggerById
+        return bloggers.find(el => el.id === id)
+
     },
     createNewBlogger(name: string, youtubeUrl: string) {
         const newBlogger = {
@@ -22,16 +22,10 @@ export const bloggersRepository = {
         if (updatedBlogger) {
             updatedBlogger.name = newName
             updatedBlogger.youtubeUrl = newYoutubeUrl
-            return true
-        } else return false;
-
-        // for (let i = 0; i < bloggers.length; i++) {
-        //     if (bloggers[i].id === id) {
-        //         bloggers[i].name = newName
-        //         bloggers[i].youtubeUrl = newYoutubeUrl
-        //         return
-        //     }
-        // }
+        } else {
+            return undefined
+        }
+        return updatedBlogger
     },
     deleteBloggerById(id: number) {
         const beforeDeliting = bloggers.length

@@ -9,7 +9,6 @@ import {authMiddleware} from "./middlewares/auth-middleware";
 const app = express();
 app.use(cors());
 app.use(bodyParser());
-app.use(authMiddleware);
 app.use('/videos', videosRouter)
 app.use('/bloggers', bloggersRouter)
 app.use('/posts', postsRouter)
