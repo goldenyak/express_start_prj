@@ -7,15 +7,13 @@ import {postsRouter} from "./routes/posts-routes";
 import {authMiddleware} from "./middlewares/auth-middleware";
 
 const app = express();
-const basicAuth = require('express-basic-auth')
-
-
 app.use(cors());
 app.use(bodyParser());
 // app.use(authMiddleware);
-app.use(basicAuth({
-    users: { 'admin': 'qwerty' }
-}))
+// const basicAuth = require('express-basic-auth')
+// app.use(basicAuth({
+//     users: { 'admin': 'qwerty' }
+// }))
 app.use('/videos', videosRouter)
 app.use('/bloggers', bloggersRouter)
 app.use('/posts', postsRouter)
