@@ -6,6 +6,7 @@ import {youtubeUrlValidation} from "../validation/youtube-url-validation";
 import {bloggerNameValidation} from "../validation/blogger-name-validation";
 import {validationResult} from "express-validator";
 import {errorsAdapt} from "../utils";
+import {bloggerIdValidation} from "../validation/blogger-id-validation";
 
 // put here array with videos
 export const bloggersRouter = Router({})
@@ -73,12 +74,7 @@ bloggersRouter.put('/:id', authMiddleware, youtubeUrlValidation, bloggerNameVali
 
     // res.sendStatus(404)
 })
-bloggersRouter.delete('/:id', authMiddleware, (req: Request, res: Response) => {
-    if (bloggers.filter(el => el.id !== +req.params.id)) {
-        res.sendStatus(404)
-        return;
-    }
-
+bloggersRouter.delete('/:id', authMiddleware, bloggerIdValidation, (req: Request, res: Response) => {
     bloggersRepository.deleteBloggerById(+req.params.id)
     res.sendStatus(204)
     res.end()
