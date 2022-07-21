@@ -38,14 +38,6 @@ postsRouter.post('/', authMiddleware, titleValidation, shortDescriptionValidatio
     (req: Request, res: Response) => {
 
         const {title, shortDescription, content, bloggerId} = req.body
-
-        const errors = validationResult(req)
-        if (!errors.isEmpty()) {
-            res.status(400).json({"errorsMessages": errorsAdapt(errors.array({onlyFirstError: true}))})
-            res.end()
-            return
-        }
-
         const blogger = bloggersRepository.getBloggerById(bloggerId)
         if (blogger) {
             res.status(201).send(postsRepository.createNewPost(title, shortDescription, content, bloggerId, blogger.name))
@@ -56,13 +48,6 @@ postsRouter.post('/', authMiddleware, titleValidation, shortDescriptionValidatio
 
 postsRouter.put('/:id', authMiddleware, postIdValidation, titleValidation, shortDescriptionValidation, contentValidation, inputValidation,
     body('bloggerId').custom((value) => !!bloggersRepository.getBloggerById(value)), (req: Request, res: Response) => {
-
-        const errors = validationResult(req)
-        if (!errors.isEmpty()) {
-            res.status(400).json({"errorsMessages": errorsAdapt(errors.array({onlyFirstError: true}))})
-            res.end()
-            return
-        }
 
         const {title, shortDescription, content, bloggerId} = req.body
         const blogger = bloggersRepository.getBloggerById(bloggerId)
