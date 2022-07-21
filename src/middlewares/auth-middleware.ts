@@ -8,8 +8,7 @@ export const authMiddleware = (req: Request, res: Response, next: NextFunction) 
         next()
     } else {
         res.status(401)
-        res.end()
-        return
+        return;
     }
     if (req.headers["content-type"] === "application/json") {
         next()

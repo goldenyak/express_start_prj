@@ -6,6 +6,7 @@ import {bloggerNameValidation} from "../validation/blogger-name-validation";
 import {validationResult} from "express-validator";
 import {errorsAdapt} from "../utils";
 import {bloggerIdValidation} from "../validation/blogger-id-validation";
+import {inputValidation} from "../validation/input-validation";
 
 // put here array with videos
 export const bloggersRouter = Router({})
@@ -23,55 +24,21 @@ bloggersRouter.get('/:id', bloggerIdValidation, (req: Request, res: Response) =>
     }
     res.sendStatus(404);
 })
-bloggersRouter.post('/', authMiddleware, youtubeUrlValidation, bloggerNameValidation, (req: Request, res: Response) => {
+bloggersRouter.post('/', authMiddleware, youtubeUrlValidation, bloggerNameValidation, inputValidation, (req: Request, res: Response) => {
     const {name, youtubeUrl} = req.body
-
-    const errors = validationResult(req)
-    if (!errors.isEmpty()) {
-        res.status(400).json({"errorsMessages": errorsAdapt(errors.array({onlyFirstError: true}))})
-        res.end()
-        return
-    }
 
     const newBlogger = bloggersRepository.createNewBlogger(name, youtubeUrl)
     newBlogger && res.status(201).send(newBlogger)
     res.end()
-
-    // if (!name || !name.match('[Aa-zZ]+') || name.length > 15) {
-    //     errorsMessages.errorsMessages.push({
-    //         "message": "name incorrect",
-    //         "field": "name"
-    //     })
-    // }
-    // if (!youtubeUrl || youtubeUrl.length > 100 || !youtubeUrl.match('^https:\/\/([a-zA-Z0-9_-]+\.)+[a-zA-Z0-9_-]+(\/[a-zA-Z0-9_-]+)*\/?$')) {
-    //     errorsMessages.errorsMessages.push({
-    //         "message": "youtubeUrl incorrect",
-    //         "field": "youtubeUrl"
-    //     })
-    // }
-    // if (errorsMessages.errorsMessages.length > 0) {
-    //     res.status(400).json(errorsMessages)
-    //     res.end()
-    //     errorsMessages.errorsMessages = []
-    //     return
-    // }
 })
-bloggersRouter.put('/:id', authMiddleware, bloggerIdValidation, youtubeUrlValidation, bloggerNameValidation, (req: Request, res: Response) => {
+
+bloggersRouter.put('/:id', authMiddleware, bloggerIdValidation, youtubeUrlValidation, bloggerNameValidation, inputValidation, (req: Request, res: Response) => {
     const {name, youtubeUrl} = req.body
     const {id} = req.params
-
-    const errors = validationResult(req)
-    if (!errors.isEmpty()) {
-        res.status(400).send({"errorsMessages": errorsAdapt(errors.array({onlyFirstError: true}))})
-        res.end()
-        return
-    }
 
     const updatedBlogger = bloggersRepository.updateBloggerById(name, youtubeUrl, +id)
     updatedBlogger && res.sendStatus(204)
     res.end()
-
-    // res.sendStatus(404)
 })
 bloggersRouter.delete('/:id', authMiddleware, bloggerIdValidation, (req: Request, res: Response) => {
     bloggersRepository.deleteBloggerById(+req.params.id)
