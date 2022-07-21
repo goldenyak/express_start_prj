@@ -1,5 +1,5 @@
 export const errorsAdapt = (errors: object[]) => {
-    const resultErrors = errors.map((el: any) => {
+    const resultErrors = errors.map((el:any) => {
         return {message: el.msg.toString(), field: el.param.toString()}
     })
 

@@ -22,7 +22,7 @@ bloggersRouter.get('/:id', bloggerIdValidation, (req: Request, res: Response) =>
     }
     res.sendStatus(404);
 })
-bloggersRouter.post('/', authMiddleware, youtubeUrlValidation, bloggerNameValidation, inputValidation, (req: Request, res: Response) => {
+bloggersRouter.post('/', authMiddleware, bloggerNameValidation, youtubeUrlValidation, inputValidation, (req: Request, res: Response) => {
     const {name, youtubeUrl} = req.body
 
     const newBlogger = bloggersRepository.createNewBlogger(name, youtubeUrl)
