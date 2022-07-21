@@ -1,8 +1,8 @@
 import {Request, Response, Router} from 'express'
 import {videos} from "../repositories/db";
 import {videosRepository} from "../repositories/videos-repository";
-import {titleValidation} from "../validation/title-validation";
-import {inputValidation} from "../validation/input-validation";
+import {titleValidation} from "../validation/posts/title-validation";
+import {inputValidation} from "../validation/errors/input-validation";
 
 export const videosRouter = Router({})
 

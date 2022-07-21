@@ -1,12 +1,10 @@
 import {Request, Response, Router} from 'express'
 import {bloggersRepository} from "../repositories/bloggers-repository";
 import {authMiddleware} from "../middlewares/auth-middleware";
-import {youtubeUrlValidation} from "../validation/youtube-url-validation";
-import {bloggerNameValidation} from "../validation/blogger-name-validation";
-import {validationResult} from "express-validator";
-import {errorsAdapt} from "../utils";
-import {bloggerIdValidation} from "../validation/blogger-id-validation";
-import {inputValidation} from "../validation/input-validation";
+import {youtubeUrlValidation} from "../validation/bloggers/youtube-url-validation";
+import {bloggerNameValidation} from "../validation/bloggers/blogger-name-validation";
+import {bloggerIdValidation} from "../validation/bloggers/blogger-id-validation";
+import {inputValidation} from "../validation/errors/input-validation";
 
 // put here array with videos
 export const bloggersRouter = Router({})

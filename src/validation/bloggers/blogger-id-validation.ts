@@ -1,5 +1,5 @@
 import {NextFunction, Request, Response } from "express";
-import {bloggers} from "../repositories/db";
+import {bloggers} from "../../repositories/db";
 
 export const bloggerIdValidation = (req: Request, res: Response, next:NextFunction) => {
     const bloggerId = +req.params.id || null

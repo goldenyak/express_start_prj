@@ -1,11 +1,17 @@
 import {Request, Response, Router} from 'express'
 import {bloggers, errorsMessages, posts} from "../repositories/db";
 import {postsRepository} from "../repositories/posts-repository";
-import {postIdValidation} from "../validation/post-id-validation";
+import {postIdValidation} from "../validation/posts/post-id-validation";
 import {body, validationResult} from "express-validator";
 import {errorsAdapt} from "../utils";
 import {bloggersRepository} from "../repositories/bloggers-repository";
 import {authMiddleware} from "../middlewares/auth-middleware";
+import {titleValidation} from "../validation/posts/title-validation";
+import {
+    shortDescriptionValidation
+} from "../validation/posts/short-description-validation";
+import {contentValidation} from "../validation/posts/content-validation";
+import {inputValidation} from "../validation/errors/input-validation";
 
 export const postsRouter = Router({})
 
@@ -15,22 +21,19 @@ postsRouter.get('/', (req: Request, res: Response) => {
     res.end()
 });
 postsRouter.get('/:id', postIdValidation, (req: Request, res: Response) => {
-    const errors = validationResult(req)
-    if (!errors.isEmpty()) {
-        res.status(400).json({"errorsMessages": errorsAdapt(errors.array({onlyFirstError: true}))})
-        res.end()
-        return
-    }
+    // const errors = validationResult(req)
+    // if (!errors.isEmpty()) {
+    //     res.status(400).json({"errorsMessages": errorsAdapt(errors.array({onlyFirstError: true}))})
+    //     res.end()
+    //     return
+    // }
     const postById = postsRepository.getPostsById(+req.params.id)
     res.status(200).send(postById)
     res.end()
 
 })
 
-postsRouter.post('/', authMiddleware,
-    body('title').trim().notEmpty().isLength({max: 30}),
-    body('shortDescription').trim().notEmpty().isLength({max: 100}),
-    body('content').trim().notEmpty().isLength({max: 1000}),
+postsRouter.post('/', authMiddleware, titleValidation, shortDescriptionValidation, contentValidation, inputValidation,
     body('bloggerId').custom((value) => !!bloggersRepository.getBloggerById(value)),
     (req: Request, res: Response) => {
 
@@ -51,10 +54,7 @@ postsRouter.post('/', authMiddleware,
         }
     })
 
-postsRouter.put('/:id', authMiddleware, postIdValidation,
-    body('title').trim().notEmpty().isLength({max: 30}),
-    body('shortDescription').trim().notEmpty().isLength({max: 100}),
-    body('content').trim().notEmpty().isLength({max: 1000}),
+postsRouter.put('/:id', authMiddleware, postIdValidation, titleValidation, shortDescriptionValidation, contentValidation, inputValidation,
     body('bloggerId').custom((value) => !!bloggersRepository.getBloggerById(value)), (req: Request, res: Response) => {
 
         const errors = validationResult(req)
