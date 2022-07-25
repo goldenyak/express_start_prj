@@ -1,3 +1,3 @@
 import {body} from "express-validator";
 
-export const youtubeUrlValidation = body('youtubeUrl').isLength({max: 100}).isURL()
+export const youtubeUrlValidation = body('youtubeUrl').isURL()

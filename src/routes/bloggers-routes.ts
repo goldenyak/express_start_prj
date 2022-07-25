@@ -12,7 +12,7 @@ export const bloggersRouter = Router({})
 bloggersRouter.get('/', (req: Request, res: Response) => {
     const bloggers = bloggersRepository.getAllBloggers()
     res.status(200).send(bloggers)
-    res.end()
+    // res.end()
 });
 bloggersRouter.get('/:id', bloggerIdValidation, (req: Request, res: Response) => {
     const foundBlogger = bloggersRepository.getBloggerById(+req.params.id)
@@ -24,10 +24,12 @@ bloggersRouter.get('/:id', bloggerIdValidation, (req: Request, res: Response) =>
 })
 bloggersRouter.post('/', authMiddleware, bloggerNameValidation, youtubeUrlValidation, inputValidation, (req: Request, res: Response) => {
     const {name, youtubeUrl} = req.body
+    console.log('ROURE_NAME =', name)
+    console.log('ROUTE_URL ==', youtubeUrl)
 
     const newBlogger = bloggersRepository.createNewBlogger(name, youtubeUrl)
     newBlogger && res.status(201).send(newBlogger)
-    res.end()
+    // res.end()
 })
 
 bloggersRouter.put('/:id', authMiddleware, bloggerIdValidation, youtubeUrlValidation, bloggerNameValidation, inputValidation, (req: Request, res: Response) => {
@@ -36,11 +38,11 @@ bloggersRouter.put('/:id', authMiddleware, bloggerIdValidation, youtubeUrlValida
 
     const updatedBlogger = bloggersRepository.updateBloggerById(name, youtubeUrl, +id)
     updatedBlogger && res.sendStatus(204)
-    res.end()
+    return;
 })
 bloggersRouter.delete('/:id', authMiddleware, bloggerIdValidation, (req: Request, res: Response) => {
     bloggersRepository.deleteBloggerById(+req.params.id)
     res.sendStatus(204)
-    res.end()
+    // res.end()
     return;
 })
