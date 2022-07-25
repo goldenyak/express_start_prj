@@ -6,6 +6,7 @@ export const authMiddleware = (req: Request, res: Response, next: NextFunction) 
 
     if (req.headers.authorization && authType === 'Basic' && authorized === true) {
         next()
+        return;
     } else {
         res.sendStatus(401)
         return;
