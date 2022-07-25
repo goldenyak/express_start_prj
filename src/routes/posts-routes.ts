@@ -18,7 +18,7 @@ export const postsRouter = Router({})
 postsRouter.get('/', (req: Request, res: Response) => {
     const posts = postsRepository.getAllPosts()
     res.status(200).send(posts)
-    res.end()
+    // res.end()
 });
 postsRouter.get('/:id', postIdValidation, (req: Request, res: Response) => {
     // const errors = validationResult(req)
@@ -29,7 +29,7 @@ postsRouter.get('/:id', postIdValidation, (req: Request, res: Response) => {
     // }
     const postById = postsRepository.getPostsById(+req.params.id)
     res.status(200).send(postById)
-    res.end()
+    // res.end()
 
 })
 
@@ -41,8 +41,8 @@ postsRouter.post('/', authMiddleware, titleValidation, shortDescriptionValidatio
         const blogger = bloggersRepository.getBloggerById(bloggerId)
         if (blogger) {
             res.status(201).send(postsRepository.createNewPost(title, shortDescription, content, bloggerId, blogger.name))
-            res.end()
-            return
+            // res.end()
+            // return
         }
     })
 
@@ -52,8 +52,8 @@ postsRouter.put('/:id', authMiddleware, postIdValidation, titleValidation, short
         const {title, shortDescription, content, bloggerId} = req.body
         const blogger = bloggersRepository.getBloggerById(bloggerId)
         blogger && postsRepository.updatePostById(+req.params.id, title, shortDescription, content, bloggerId)
-        res.status(204)
-        res.end()
+        res.sendStatus(204)
+        // res.end()
     })
 
 
@@ -62,12 +62,12 @@ postsRouter.delete('/:id', authMiddleware, postIdValidation,
     const postById = postsRepository.getPostsById(+req.params.id)
         if(postById) {
             postsRepository.deletePostById(+req.params.id)
-            res.status(204)
-            res.end()
+            res.sendStatus(204)
+            // res.end()
             return
         } else {
-            res.status(404)
-            res.end()
+            res.sendStatus(404)
+            // res.end()
             return
         }
 
