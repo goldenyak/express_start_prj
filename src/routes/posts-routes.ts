@@ -33,10 +33,13 @@ postsRouter.get('/:id', postIdValidation, (req: Request, res: Response) => {
 
 })
 
-postsRouter.post('/', authMiddleware, titleValidation, shortDescriptionValidation, contentValidation, inputValidation,
-    body('bloggerId').custom((value) => !!bloggersRepository.getBloggerById(value)),
+postsRouter.post('/',
+    authMiddleware, body('bloggerId').custom((value) => !!bloggersRepository.getBloggerById(value)),
+    titleValidation,
+    shortDescriptionValidation,
+    contentValidation,
+    inputValidation,
     (req: Request, res: Response) => {
-
         const {title, shortDescription, content, bloggerId} = req.body
         const blogger = bloggersRepository.getBloggerById(bloggerId)
         if (blogger) {
@@ -46,8 +49,15 @@ postsRouter.post('/', authMiddleware, titleValidation, shortDescriptionValidatio
         }
     })
 
-postsRouter.put('/:id', authMiddleware, postIdValidation, titleValidation, shortDescriptionValidation, contentValidation, inputValidation,
-    body('bloggerId').custom((value) => !!bloggersRepository.getBloggerById(value)), (req: Request, res: Response) => {
+postsRouter.put('/:id',
+    authMiddleware,
+    postIdValidation,
+    body('bloggerId').custom((value) => !!bloggersRepository.getBloggerById(value)),
+    titleValidation,
+    shortDescriptionValidation,
+    contentValidation,
+    inputValidation,
+    (req: Request, res: Response) => {
 
         const {title, shortDescription, content, bloggerId} = req.body
         const blogger = bloggersRepository.getBloggerById(bloggerId)
@@ -59,8 +69,8 @@ postsRouter.put('/:id', authMiddleware, postIdValidation, titleValidation, short
 
 postsRouter.delete('/:id', authMiddleware, postIdValidation,
     (req: Request, res: Response) => {
-    const postById = postsRepository.getPostsById(+req.params.id)
-        if(postById) {
+        const postById = postsRepository.getPostsById(+req.params.id)
+        if (postById) {
             postsRepository.deletePostById(+req.params.id)
             res.sendStatus(204)
             // res.end()
@@ -71,4 +81,4 @@ postsRouter.delete('/:id', authMiddleware, postIdValidation,
             return
         }
 
-})
+    })
