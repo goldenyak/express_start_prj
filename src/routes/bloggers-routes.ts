@@ -10,8 +10,8 @@ import * as QueryString from "querystring";
 export const bloggersRouter = Router({})
 
 bloggersRouter.get('/', async (req: Request, res: Response) => {
-    const SearchNameTerm: any = req.query
-    const bloggers = await bloggersRepository.getAllBloggers(SearchNameTerm)
+    const {SearchNameTerm} = req.query
+    const bloggers = await bloggersRepository.getAllBloggers(SearchNameTerm as string)
     res.status(200).send(bloggers)
 });
 bloggersRouter.get('/:id', bloggerIdValidation, async (req: Request, res: Response) => {
