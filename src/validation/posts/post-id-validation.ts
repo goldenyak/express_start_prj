@@ -1,12 +1,13 @@
-import {NextFunction, Request, Response } from "express";
-import {posts} from "../../repositories/db";
+import {NextFunction, Request, Response} from "express";
+import {client} from "../../repositories/db";
 
-export const postIdValidation = (req: Request, res: Response, next:NextFunction) => {
+export const postIdValidation = (req: Request, res: Response, next: NextFunction) => {
     const bloggerId = +req.params.id || null
 
-    if(!posts.find(el => el.id === bloggerId)) {
+    if (!client.db("express-project").collection("posts").findOne({id: bloggerId})) {
         res.status(404)
-        res.end()
         return
-    } else next()
+    } else {
+        next()
+    }
 };

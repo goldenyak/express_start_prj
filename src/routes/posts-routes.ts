@@ -1,9 +1,7 @@
 import {Request, Response, Router} from 'express'
-import {bloggers, errorsMessages, posts} from "../repositories/db";
 import {postsRepository} from "../repositories/posts-repository";
 import {postIdValidation} from "../validation/posts/post-id-validation";
-import {body, validationResult} from "express-validator";
-import {errorsAdapt} from "../utils";
+import {body} from "express-validator";
 import {bloggersRepository} from "../repositories/bloggers-repository";
 import {authMiddleware} from "../middlewares/auth-middleware";
 import {titleValidation} from "../validation/posts/title-validation";
@@ -22,8 +20,6 @@ postsRouter.get('/', async (req: Request, res: Response) => {
 postsRouter.get('/:id', postIdValidation, async (req: Request, res: Response) => {
     const postById = await postsRepository.getPostsById(+req.params.id)
     res.status(200).send(postById)
-
-
 })
 
 postsRouter.post('/',

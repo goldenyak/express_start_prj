@@ -9,8 +9,9 @@ export type bloggersType = {
 }
 
 export const bloggersRepository = {
-    async getAllBloggers(): Promise<bloggersType[]> {
-        return client.db("express-project").collection<bloggersType>("bloggers").find({}).toArray()
+    async getAllBloggers(SearchNameTerm: string): Promise<bloggersType[]> {
+        return client.db("express-project").collection<bloggersType>("bloggers").find({name: {$regex: SearchNameTerm}}).toArray()
+        // return client.db("express-project").collection<bloggersType>("bloggers").find({}).toArray()
     },
     async getBloggerById(id: number | null | undefined): Promise<any> {
         if (id) {

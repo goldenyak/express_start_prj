@@ -5,14 +5,16 @@ import {youtubeUrlValidation} from "../validation/bloggers/youtube-url-validatio
 import {bloggerNameValidation} from "../validation/bloggers/blogger-name-validation";
 import {bloggerIdValidation} from "../validation/bloggers/blogger-id-validation";
 import {inputValidation} from "../validation/errors/input-validation";
+import * as QueryString from "querystring";
 
 export const bloggersRouter = Router({})
 
 bloggersRouter.get('/', async (req: Request, res: Response) => {
-    const bloggers = await bloggersRepository.getAllBloggers()
+    const SearchNameTerm: any = req.query
+    const bloggers = await bloggersRepository.getAllBloggers(SearchNameTerm)
     res.status(200).send(bloggers)
 });
-bloggersRouter.get('/:id', async (req: Request, res: Response) => {
+bloggersRouter.get('/:id', bloggerIdValidation, async (req: Request, res: Response) => {
     const foundBlogger = await bloggersRepository.getBloggerById(+req.params.id)
     if (foundBlogger) {
         res.status(200).send(foundBlogger)
@@ -27,7 +29,7 @@ bloggersRouter.post('/', authMiddleware, bloggerNameValidation, youtubeUrlValida
     newBlogger && res.status(201).send(newBlogger)
 })
 
-bloggersRouter.put('/:id', authMiddleware, youtubeUrlValidation, bloggerNameValidation, inputValidation, async (req: Request, res: Response) => {
+bloggersRouter.put('/:id', authMiddleware, bloggerIdValidation, youtubeUrlValidation, bloggerNameValidation, inputValidation, async (req: Request, res: Response) => {
     const {name, youtubeUrl} = req.body
     const {id} = req.params
 
@@ -35,7 +37,7 @@ bloggersRouter.put('/:id', authMiddleware, youtubeUrlValidation, bloggerNameVali
     updatedBlogger && res.sendStatus(204)
     return;
 })
-bloggersRouter.delete('/:id', authMiddleware, async (req: Request, res: Response) => {
+bloggersRouter.delete('/:id', authMiddleware, bloggerIdValidation, async (req: Request, res: Response) => {
     await bloggersRepository.deleteBloggerById(+req.params.id)
     res.sendStatus(204)
     return;
