@@ -1,3 +1,19 @@
+import {MongoClient} from "mongodb";
+
+const mongoUri = process.env.mongoUri || "mongodb://0.0.0.0:27017";
+export const client = new MongoClient(mongoUri);
+
+export async function runDb() {
+    try {
+        await client.connect();
+        await client.db("bloggers").command({ping: 1});
+        console.log("Connected successfully to mongo server!")
+    } catch {
+        await client.close();
+    }
+}
+
+
 export const videos = [
     {id: 1, title: 'About JS - 01', author: 'it-incubator.eu'},
     {id: 2, title: 'About JS - 02', author: 'it-incubator.eu'},

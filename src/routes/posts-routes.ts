@@ -15,37 +15,30 @@ import {inputValidation} from "../validation/errors/input-validation";
 
 export const postsRouter = Router({})
 
-postsRouter.get('/', (req: Request, res: Response) => {
-    const posts = postsRepository.getAllPosts()
+postsRouter.get('/', async (req: Request, res: Response) => {
+    const posts = await postsRepository.getAllPosts()
     res.status(200).send(posts)
-    // res.end()
 });
-postsRouter.get('/:id', postIdValidation, (req: Request, res: Response) => {
-    // const errors = validationResult(req)
-    // if (!errors.isEmpty()) {
-    //     res.status(400).json({"errorsMessages": errorsAdapt(errors.array({onlyFirstError: true}))})
-    //     res.end()
-    //     return
-    // }
-    const postById = postsRepository.getPostsById(+req.params.id)
+postsRouter.get('/:id', postIdValidation, async (req: Request, res: Response) => {
+    const postById = await postsRepository.getPostsById(+req.params.id)
     res.status(200).send(postById)
-    // res.end()
+
 
 })
 
 postsRouter.post('/',
-    authMiddleware, body('bloggerId').custom((value) => !!bloggersRepository.getBloggerById(value)),
+    authMiddleware,
+    body('bloggerId').custom((value) => !!bloggersRepository.getBloggerById(value)),
     titleValidation,
     shortDescriptionValidation,
     contentValidation,
     inputValidation,
-    (req: Request, res: Response) => {
+    async (req: Request, res: Response) => {
         const {title, shortDescription, content, bloggerId} = req.body
-        const blogger = bloggersRepository.getBloggerById(bloggerId)
+        const blogger = await bloggersRepository.getBloggerById(bloggerId)
         if (blogger) {
             res.status(201).send(postsRepository.createNewPost(title, shortDescription, content, bloggerId, blogger.name))
-            // res.end()
-            // return
+
         }
     })
 
@@ -57,27 +50,24 @@ postsRouter.put('/:id',
     shortDescriptionValidation,
     contentValidation,
     inputValidation,
-    (req: Request, res: Response) => {
+    async (req: Request, res: Response) => {
 
         const {title, shortDescription, content, bloggerId} = req.body
-        const blogger = bloggersRepository.getBloggerById(bloggerId)
-        blogger && postsRepository.updatePostById(+req.params.id, title, shortDescription, content, bloggerId)
+        const blogger = await bloggersRepository.getBloggerById(bloggerId)
+        blogger && await postsRepository.updatePostById(+req.params.id, title, shortDescription, content, bloggerId)
         res.sendStatus(204)
-        // res.end()
     })
 
 
 postsRouter.delete('/:id', authMiddleware, postIdValidation,
-    (req: Request, res: Response) => {
-        const postById = postsRepository.getPostsById(+req.params.id)
+    async (req: Request, res: Response) => {
+        const postById = await postsRepository.getPostsById(+req.params.id)
         if (postById) {
-            postsRepository.deletePostById(+req.params.id)
+            await postsRepository.deletePostById(+req.params.id)
             res.sendStatus(204)
-            // res.end()
             return
         } else {
             res.sendStatus(404)
-            // res.end()
             return
         }
 

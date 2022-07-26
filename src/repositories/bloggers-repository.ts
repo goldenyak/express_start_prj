@@ -1,34 +1,49 @@
-import {bloggers, videos} from "./db";
+// import {bloggers} from "./db";
+
+import {client} from "./db";
+
+export type bloggersType = {
+    "id": number,
+    "name": string,
+    "youtubeUrl": string
+}
 
 export const bloggersRepository = {
-    getAllBloggers() {
-        return bloggers;
+    async getAllBloggers(): Promise<bloggersType[]> {
+        return client.db("express-project").collection<bloggersType>("bloggers").find({}).toArray()
     },
-    getBloggerById(id: number) {
-        return bloggers.find(el => el.id === id)
+    async getBloggerById(id: number | null | undefined): Promise<any> {
+        if (id) {
+            return client.db("express-project").collection("bloggers").findOne({id: id})
+        } else {
+            return client.db("express-project").collection("bloggers").find({}).toArray()
 
+        }
     },
-    createNewBlogger(name: string, youtubeUrl: string) {
+    async createNewBlogger(name: string, youtubeUrl: string): Promise<bloggersType> {
         const newBlogger = {
             id: +(new Date()),
             name: name,
             youtubeUrl: youtubeUrl
         }
-        bloggers.push(newBlogger)
+        await client.db("express-project").collection<bloggersType>("bloggers").insertOne(newBlogger)
         return newBlogger
     },
-    updateBloggerById(newName: string, newYoutubeUrl: string, id: number) {
-        const updatedBlogger = bloggers.find(el => el.id === id)
-        if (updatedBlogger) {
-            updatedBlogger.name = newName
-            updatedBlogger.youtubeUrl = newYoutubeUrl
-        } else {
-            return undefined
-        }
+    async updateBloggerById(newName: string, newYoutubeUrl: string, id: number): Promise<any> {
+
+        const updatedBlogger = client.db("express-project").collection<bloggersType>("bloggers").updateOne({id: id}, {
+            $set: {
+                name: newName,
+                youtubeUrl: newYoutubeUrl
+            }
+        })
         return updatedBlogger
     },
-    deleteBloggerById(id: number) {
-        bloggers.splice(bloggers.findIndex(item => item.id === id), 1)
-        return
+    async deleteBloggerById(id: number): Promise<any> {
+        if (id) {
+            return client.db("express-project").collection("bloggers").deleteOne({id: id})
+        } else {
+            return client.db("express-project").collection("bloggers").find({}).toArray()
+        }
     }
 }
