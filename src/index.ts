@@ -3,7 +3,6 @@ import cors from 'cors';
 import bodyParser from "body-parser";
 import {bloggersRouter} from "./routes/bloggers-routes";
 import {postsRouter} from "./routes/posts-routes";
-import {authMiddleware} from "./middlewares/auth-middleware";
 import {runDb} from "./db/db";
 
 

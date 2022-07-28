@@ -9,7 +9,7 @@ export const postsCollection = client.db("express-project").collection<any>("pos
 export async function runDb() {
     try {
         await client.connect();
-        await client.db("bloggers").command({ping: 1});
+        // await client.db("bloggers").command({ping: 1});
         console.log("Connected successfully to mongo server!")
     } catch {
         await client.close();
