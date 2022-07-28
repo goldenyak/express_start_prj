@@ -1,38 +1,34 @@
-// import {bloggers} from "./db";
-
-import {client} from "./db";
-
-export type bloggersType = {
-    "id": number,
-    "name": string,
-    "youtubeUrl": string
-}
+import {bloggersCollection} from "../db/db";
 
 export const bloggersRepository = {
-    async getAllBloggers(SearchNameTerm: string): Promise<bloggersType[]> {
-        return client.db("express-project").collection<bloggersType>("bloggers").find({name: {$regex: SearchNameTerm}}).toArray()
-        // return client.db("express-project").collection<bloggersType>("bloggers").find({}).toArray()
+    async getAllBloggers(pageNumber: number, pageSize: number, searchNameTerm: string | undefined): Promise<any> {
+
+        const filter = searchNameTerm ? {name: {$regex: searchNameTerm}} : {};
+        const countOfBloggers = await bloggersCollection.countDocuments(filter);
+        const allBloggers = await bloggersCollection
+            .find(filter, {projection:{ _id: 0 }})
+            .skip((pageNumber - 1) * pageSize)
+            .limit(pageSize)
+            .toArray();
+
+        return [countOfBloggers, allBloggers]
     },
+
     async getBloggerById(id: number | null | undefined): Promise<any> {
         if (id) {
-            return client.db("express-project").collection("bloggers").findOne({id: id})
+            return await bloggersCollection.findOne({id: id})
         } else {
-            return client.db("express-project").collection("bloggers").find({}).toArray()
-
+            return await bloggersCollection.find({}).toArray()
         }
     },
-    async createNewBlogger(name: string, youtubeUrl: string): Promise<bloggersType> {
-        const newBlogger = {
-            id: +(new Date()),
-            name: name,
-            youtubeUrl: youtubeUrl
-        }
-        await client.db("express-project").collection<bloggersType>("bloggers").insertOne(newBlogger)
+    async createNewBlogger(newBlogger: any): Promise<any> {
+
+        await bloggersCollection.insertOne(newBlogger)
         return newBlogger
     },
     async updateBloggerById(newName: string, newYoutubeUrl: string, id: number): Promise<any> {
 
-        const updatedBlogger = client.db("express-project").collection<bloggersType>("bloggers").updateOne({id: id}, {
+        const updatedBlogger = bloggersCollection.updateOne({id: id}, {
             $set: {
                 name: newName,
                 youtubeUrl: newYoutubeUrl
@@ -42,9 +38,9 @@ export const bloggersRepository = {
     },
     async deleteBloggerById(id: number): Promise<any> {
         if (id) {
-            return client.db("express-project").collection("bloggers").deleteOne({id: id})
+            return await bloggersCollection.deleteOne({id: id})
         } else {
-            return client.db("express-project").collection("bloggers").find({}).toArray()
+            return await bloggersCollection.find({}).toArray()
         }
     }
 }
