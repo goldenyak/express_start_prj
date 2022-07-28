@@ -10,7 +10,7 @@ export async function runDb() {
     try {
         await client.connect();
         // await client.db("bloggers").command({ping: 1});
-        console.log("Connected successfully to mongo server!")
+        console.log("Connected successfully to mongo server")
     } catch {
         await client.close();
     }
