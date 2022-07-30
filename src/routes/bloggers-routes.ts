@@ -1,11 +1,11 @@
 import {Request, Response, Router} from 'express'
-import {bloggersRepository} from "../repositories/bloggers-repository";
 import {authMiddleware} from "../middlewares/auth-middleware";
 import {youtubeUrlValidation} from "../validation/bloggers/youtube-url-validation";
 import {bloggerNameValidation} from "../validation/bloggers/blogger-name-validation";
 import {bloggerIdValidation} from "../validation/bloggers/blogger-id-validation";
 import {inputValidation} from "../validation/errors/input-validation";
 import {bloggerServices} from "../services/blogger-services";
+import {param, query} from "express-validator";
 
 export const bloggersRouter = Router({})
 
@@ -45,3 +45,15 @@ bloggersRouter.delete('/:id', authMiddleware, bloggerIdValidation, async (req: R
     res.sendStatus(204)
     return;
 })
+bloggersRouter.get('/:bloggerId/posts',
+    bloggerIdValidation,
+    param('bloggerId').isInt(),
+    query('PageNumber').isInt().optional({checkFalsy: true}),
+    query('PageSize').isInt().optional({checkFalsy: true}),
+    async (req: Request, res: Response) => {
+        const pageNumber = req.query.PageNumber ? Number(req.query.PageNumber) : 1
+        const pageSize = req.query.PageSize ? Number(req.query.PageSize) : 10
+
+        res.status(200).send(await bloggerServices.getBloggerPosts(pageNumber, pageSize, +req.params.bloggerId))
+        return
+    })

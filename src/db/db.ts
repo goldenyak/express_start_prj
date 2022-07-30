@@ -1,6 +1,7 @@
 import {MongoClient} from "mongodb";
+import 'dotenv/config'
 
-const mongoUri = process.env.mongoUri || "mongodb://0.0.0.0:27017";
+const mongoUri = process.env.MONGO_URI || "mongodb://0.0.0.0:27017";
 export const client = new MongoClient(mongoUri);
 
 export const bloggersCollection = client.db("express-project").collection<any>("bloggers");

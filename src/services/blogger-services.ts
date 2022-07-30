@@ -32,5 +32,9 @@ export const bloggerServices = {
 
     async deleteBloggerById(id: number) {
         return await bloggersRepository.deleteBloggerById(id)
+    },
+
+    async getBloggerPosts(pageNumber: number, pageSize: number, bloggerId: number) {
+
     }
 }
