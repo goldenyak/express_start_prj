@@ -1,32 +1,43 @@
 import {postsCollection} from "../db/db";
+import {postsType} from "../types/posts-types";
 
 export const postsRepository = {
-    async getAllPosts(): Promise<any> {
-        return postsCollection.find({}).toArray()
-    },
-    async getPostsById(id: number | null | undefined): Promise<any> {
-        if (id) {
-            return postsCollection.findOne({id: id})
-        } else {
-            return postsCollection.find({}).toArray()
-        }
-    },
-    async createNewPost(title: string, shortDescription: string, content: string, bloggerId: number, bloggerName: string): Promise<any> {
-        const newPost = {
-            "id": +(new Date()),
-            "title": title,
-            "shortDescription": shortDescription,
-            "content": content,
-            "bloggerId": bloggerId,
-            "bloggerName": bloggerName
+    async getAllPosts(pageNumber: number, pageSize: number, bloggerId?: number): Promise<[number, Object[]]> {
+        const filter = bloggerId ? {bloggerId: bloggerId} : {}
 
+        const countOfPosts = await postsCollection.countDocuments(filter);
+
+        const posts = await postsCollection
+            .find(filter, {projection: {_id: 0}})
+            .skip((pageNumber - 1) * pageSize)
+            .limit(pageSize)
+            .toArray();
+
+        return [countOfPosts, posts]
+    },
+    async getPostById(id: number) {
+        // const filter = {id: id}
+        const post = await postsCollection.findOne({id: id}, {projection: {_id: 0}})
+        return post
+    },
+    async createNewPost(post: postsType) {
+        try {
+            await postsCollection.insertOne(post)
+            return {
+                "id": post.id,
+                "title": post.title,
+                "shortDescription": post.shortDescription,
+                "content": post.content,
+                "bloggerId": post.bloggerId,
+                "bloggerName": post.bloggerName
+            }
+        } catch (error) {
+            console.log(error)
         }
-        await postsCollection.insertOne(newPost)
-        return newPost
     },
 
     async updatePostById(id: number, title: string, shortDescription: string, content: string, bloggerId: number): Promise<any> {
-        const post = await postsRepository.getPostsById(id)
+        const post = await postsRepository.getPostById(id)
 
         const updatedPost = postsCollection.updateOne({id: id}, {
             $set: {

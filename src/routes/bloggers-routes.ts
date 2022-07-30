@@ -6,15 +6,25 @@ import {bloggerIdValidation} from "../validation/bloggers/blogger-id-validation"
 import {inputValidation} from "../validation/errors/input-validation";
 import {bloggerServices} from "../services/blogger-services";
 import {param, query} from "express-validator";
+import {titleValidation} from "../validation/posts/title-validation";
+import {
+    shortDescriptionValidation
+} from "../validation/posts/short-description-validation";
+import {contentValidation} from "../validation/posts/content-validation";
+import {bloggersRepository} from "../repositories/bloggers-repository";
 
 export const bloggersRouter = Router({})
 
-bloggersRouter.get('/', async (req: Request, res: Response) => {
-    const searchNameTerm = req.query.searchNameTerm?.toString()
-    const pageNumber = req.query.pageNumber ? Number(req.query.PageNumber) : 1
-    const pageSize = req.query.pageSize ? Number(req.query.pageSize) : 10
+bloggersRouter.get('/',
+    query('PageNumber').isInt().optional({checkFalsy: true}),
+    query('PageSize').isInt().optional({checkFalsy: true}),
+    async (req: Request, res: Response) => {
 
-    const bloggers = await bloggerServices.getAllBloggers(pageNumber, pageSize, searchNameTerm)
+    const searchNameTerm = req.query.SearchNameTerm?.toString()
+    const PageNumber = req.query.PageNumber ? Number(req.query.PageNumber) : 1
+    const PageSize = req.query.PageSize ? Number(req.query.PageSize) : 10
+
+    const bloggers = await bloggerServices.getAllBloggers(PageNumber, PageSize, searchNameTerm)
     res.status(200).send(bloggers)
 });
 bloggersRouter.get('/:id', bloggerIdValidation, async (req: Request, res: Response) => {
@@ -25,12 +35,18 @@ bloggersRouter.get('/:id', bloggerIdValidation, async (req: Request, res: Respon
     }
     res.sendStatus(404);
 })
-bloggersRouter.post('/', authMiddleware, bloggerNameValidation, youtubeUrlValidation, inputValidation, async (req: Request, res: Response) => {
-    const {name, youtubeUrl} = req.body
+bloggersRouter.post('/',
+    authMiddleware,
+    bloggerNameValidation,
+    youtubeUrlValidation,
+    inputValidation,
+    async (req: Request, res: Response) => {
+        const {name, youtubeUrl} = req.body
 
-    const newBlogger = await bloggerServices.createNewBlogger(name, youtubeUrl)
-    res.status(201).send(newBlogger)
-})
+        const newBlogger = await bloggerServices.createNewBlogger(name, youtubeUrl)
+        res.status(201).send(newBlogger)
+        return
+    })
 
 bloggersRouter.put('/:id', authMiddleware, bloggerIdValidation, youtubeUrlValidation, bloggerNameValidation, inputValidation, async (req: Request, res: Response) => {
     const {name, youtubeUrl} = req.body
@@ -55,5 +71,21 @@ bloggersRouter.get('/:bloggerId/posts',
         const pageSize = req.query.PageSize ? Number(req.query.PageSize) : 10
 
         res.status(200).send(await bloggerServices.getBloggerPosts(pageNumber, pageSize, +req.params.bloggerId))
+        return
+    })
+
+bloggersRouter.post('/:bloggerId/posts',
+    authMiddleware,
+    bloggerIdValidation,
+    titleValidation,
+    shortDescriptionValidation,
+    contentValidation,
+    inputValidation,
+    param('bloggerId').isInt(),
+    async (req: Request, res: Response) => {
+        const {title, shortDescription, content} = req.body
+
+        res.status(201).send(await bloggerServices.createBloggerPost(title, shortDescription, content, +req.params.bloggerId))
+
         return
     })

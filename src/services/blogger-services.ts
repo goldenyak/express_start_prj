@@ -1,4 +1,6 @@
 import {bloggersRepository} from "../repositories/bloggers-repository";
+import {postsRepository} from "../repositories/posts-repository";
+import {ObjectId} from "mongodb";
 
 export const bloggerServices = {
     async getAllBloggers(pageNumber: number, pageSize: number, searchNameTerm: string | undefined) {
@@ -12,13 +14,14 @@ export const bloggerServices = {
         }
     },
 
-    async getBloggerById(id: number | null | undefined) {
+    async getBloggerById(id: number) {
         const foundedBlogger = await bloggersRepository.getBloggerById(id)
         return foundedBlogger
     },
 
     async createNewBlogger(name: string, youtubeUrl: string) {
         const newBlogger = {
+            _id: new ObjectId(),
             id: +(new Date()),
             name: name,
             youtubeUrl: youtubeUrl
@@ -35,6 +38,27 @@ export const bloggerServices = {
     },
 
     async getBloggerPosts(pageNumber: number, pageSize: number, bloggerId: number) {
+        const postsData = await postsRepository.getAllPosts(pageNumber, pageSize, bloggerId)
+        const pagesCount = Math.ceil(postsData[0] / pageSize)
+        return {
+            "pagesCount": pagesCount,
+            "page": pageNumber,
+            "pageSize": pageSize,
+            "totalCount": postsData[0],
+            "items": postsData[1]
+        }
+    },
 
+    async createBloggerPost(title: string, shortDescription: string, content: string, bloggerId: number) {
+        const bloggerById = await bloggersRepository.getBloggerById(bloggerId)
+        return postsRepository.createNewPost({
+            "_id": new ObjectId(),
+            "id": Number(new Date()),
+            "title": title,
+            "shortDescription": shortDescription,
+            "content": content,
+            "bloggerId": bloggerId,
+            "bloggerName" : bloggerById?.name || ''
+        })
     }
 }

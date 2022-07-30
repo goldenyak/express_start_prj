@@ -1,7 +1,8 @@
 import {bloggersCollection} from "../db/db";
+import {bloggersType} from "../types/bloggers-type";
 
 export const bloggersRepository = {
-    async getAllBloggers(pageNumber: number, pageSize: number, searchNameTerm: string | undefined): Promise<any> {
+    async getAllBloggers(pageNumber: number, pageSize: number, searchNameTerm: string | undefined):Promise<[number, Object[]]> {
 
         const filter = searchNameTerm ? {name: {$regex: searchNameTerm}} : {};
         const countOfBloggers = await bloggersCollection.countDocuments(filter);
@@ -14,19 +15,17 @@ export const bloggersRepository = {
         return [countOfBloggers, allBloggers]
     },
 
-    async getBloggerById(id: number | null | undefined): Promise<any> {
-        if (id) {
-            return await bloggersCollection.findOne({id: id})
-        } else {
-            return await bloggersCollection.find({}).toArray()
-        }
+    async getBloggerById(id: number) {
+        const filter = {id: id}
+        const blogger = await bloggersCollection.findOne(filter, {projection:{ _id: 0 }})
+        return blogger
     },
-    async createNewBlogger(newBlogger: any): Promise<any> {
+    async createNewBlogger(newBlogger: bloggersType) {
 
         await bloggersCollection.insertOne(newBlogger)
         return newBlogger
     },
-    async updateBloggerById(newName: string, newYoutubeUrl: string, id: number): Promise<any> {
+    async updateBloggerById(newName: string, newYoutubeUrl: string, id: number) {
 
         const updatedBlogger = bloggersCollection.updateOne({id: id}, {
             $set: {
@@ -36,7 +35,7 @@ export const bloggersRepository = {
         })
         return updatedBlogger
     },
-    async deleteBloggerById(id: number): Promise<any> {
+    async deleteBloggerById(id: number) {
         if (id) {
             return await bloggersCollection.deleteOne({id: id})
         } else {
