@@ -54,10 +54,14 @@ postsRouter.put('/:id',
     authMiddleware,
     bloggerIdValidation,
     postIdValidation,
-    body('bloggerId').custom((value) => !!bloggersRepository.getBloggerById(value)),
     titleValidation,
     shortDescriptionValidation,
     contentValidation,
+    body('bloggerId').custom(async value => {
+        if (!await bloggersRepository.getBloggerById(value)) {
+            return Promise.reject();
+        }
+    }),
     inputValidation,
     async (req: Request, res: Response) => {
 
