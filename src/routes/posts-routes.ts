@@ -12,6 +12,7 @@ import {contentValidation} from "../validation/posts/content-validation";
 import {inputValidation} from "../validation/errors/input-validation";
 import {bloggerServices} from "../services/blogger-services";
 import {postsServices} from "../services/posts-services";
+import {bloggerIdValidation} from "../validation/bloggers/blogger-id-validation";
 
 export const postsRouter = Router({})
 
@@ -51,6 +52,7 @@ postsRouter.post('/',
 
 postsRouter.put('/:id',
     authMiddleware,
+    bloggerIdValidation,
     postIdValidation,
     body('bloggerId').custom((value) => !!bloggersRepository.getBloggerById(value)),
     titleValidation,
