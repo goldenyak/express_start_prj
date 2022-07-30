@@ -4,7 +4,7 @@ import {bloggersType} from "../types/bloggers-type";
 export const bloggersRepository = {
     async getAllBloggers(pageNumber: number, pageSize: number, searchNameTerm: string | undefined):Promise<[number, Object[]]> {
 
-        const filter = searchNameTerm ? {name: {$regex: searchNameTerm}} : {};
+        const filter = searchNameTerm ? {name: {$regex: searchNameTerm, $options: 'ig'}} : {};
         const countOfBloggers = await bloggersCollection.countDocuments(filter);
         const allBloggers = await bloggersCollection
             .find(filter, {projection:{ _id: 0 }})

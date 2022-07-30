@@ -20,13 +20,14 @@ bloggersRouter.get('/',
     query('PageSize').isInt().optional({checkFalsy: true}),
     async (req: Request, res: Response) => {
 
-    const searchNameTerm = req.query.SearchNameTerm?.toString()
-    const PageNumber = req.query.PageNumber ? Number(req.query.PageNumber) : 1
-    const PageSize = req.query.PageSize ? Number(req.query.PageSize) : 10
+        const searchNameTerm = req.query.SearchNameTerm?.toString()
+        const PageNumber = req.query.PageNumber ? Number(req.query.PageNumber) : 1
+        const PageSize = req.query.PageSize ? Number(req.query.PageSize) : 10
 
-    const bloggers = await bloggerServices.getAllBloggers(PageNumber, PageSize, searchNameTerm)
-    res.status(200).send(bloggers)
-});
+        const bloggers = await bloggerServices.getAllBloggers(PageNumber, PageSize, searchNameTerm)
+        res.status(200).send(bloggers)
+        return;
+    });
 bloggersRouter.get('/:id', bloggerIdValidation, async (req: Request, res: Response) => {
     const foundBlogger = await bloggerServices.getBloggerById(+req.params.id)
     if (foundBlogger) {
