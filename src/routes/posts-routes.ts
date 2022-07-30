@@ -69,6 +69,7 @@ postsRouter.put('/:id',
         const blogger = await bloggersRepository.getBloggerById(bloggerId)
         blogger && await postsRepository.updatePostById(+req.params.id, title, shortDescription, content, bloggerId)
         res.sendStatus(204)
+        return
     })
 
 
