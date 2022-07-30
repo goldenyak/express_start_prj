@@ -23,7 +23,11 @@ export const bloggersRepository = {
     async createNewBlogger(newBlogger: bloggersType) {
 
         await bloggersCollection.insertOne(newBlogger)
-        return newBlogger
+        return {
+            "id": newBlogger.id,
+            "name": newBlogger.name,
+            "youtubeUrl": newBlogger.youtubeUrl
+        }
     },
     async updateBloggerById(newName: string, newYoutubeUrl: string, id: number) {
 
