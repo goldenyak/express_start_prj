@@ -86,11 +86,9 @@ postsRouter.delete('/:id',
     inputValidation,
     async (req: Request, res: Response) => {
 
-        const deletedPost = await postsServices.deletePostById(+req.params.id)
+        await postsServices.deletePostById(+req.params.id)
 
-        if(deletedPost) {
-            res.status(204).send()
-            return
-        }
+        res.sendStatus(204)
         return
+
      })

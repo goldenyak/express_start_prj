@@ -15,7 +15,7 @@ export const postsServices = {
     },
 
     async getPostById(id: number) {
-        return await postsRepository.getPostById(id)
+        return postsRepository.getPostById(id)
     },
 
     async createNewPost(title: string, shortDescription: string, content: string, bloggerId: number) {
