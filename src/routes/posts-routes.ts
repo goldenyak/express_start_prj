@@ -52,7 +52,7 @@ postsRouter.post('/',
 
 postsRouter.put('/:id',
     authMiddleware,
-    bloggerIdValidation,
+    // bloggerIdValidation,
     postIdValidation,
     titleValidation,
     shortDescriptionValidation,
@@ -66,8 +66,8 @@ postsRouter.put('/:id',
     async (req: Request, res: Response) => {
 
         const {title, shortDescription, content, bloggerId} = req.body
-        const blogger = await bloggersRepository.getBloggerById(bloggerId)
-        blogger && await postsRepository.updatePostById(+req.params.id, title, shortDescription, content, bloggerId)
+        // const blogger = await bloggersRepository.getBloggerById(bloggerId)
+        await postsServices.updatePostById(+req.params.id, title, shortDescription, content, bloggerId)
         res.sendStatus(204)
         return
     })

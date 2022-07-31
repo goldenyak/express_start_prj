@@ -14,7 +14,7 @@ export const postsServices = {
         }
     },
 
-    async getPostById (id:number) {
+    async getPostById(id: number) {
         return postsRepository.getPostById(id)
     },
 
@@ -28,8 +28,17 @@ export const postsServices = {
             "shortDescription": shortDescription,
             "content": content,
             "bloggerId": bloggerId,
-            "bloggerName" : blogger?.name || ''
+            "bloggerName": blogger?.name || ''
         })
     },
+
+    async updatePostById(id: number, title: string, shortDescription: string, content: string, bloggerId: number) {
+        const bloggerById = await bloggersRepository.getBloggerById(bloggerId)
+        if (bloggerById) {
+            await postsRepository.updatePostById(id, title, shortDescription, content, bloggerId, bloggerById.name)
+        }
+        // bloggerById?.name && await postsRepository.updatePostById(id, title, shortDescription, content, bloggerId, bloggerById?.name)
+        return
+    }
 
 }
