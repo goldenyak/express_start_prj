@@ -10,7 +10,7 @@ export const postsServices = {
             page: pageNumber,
             pageSize: pageSize,
             totalCount: postsData[0],
-            items: [postsData[1]]
+            items: postsData[1]
         }
     },
 

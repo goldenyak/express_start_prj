@@ -12,7 +12,9 @@ export const postIdValidation = (req: Request, res: Response, next: NextFunction
     if (!exist) {
         res.status(404)
         return
-    } else next()
+    } else {
+        next()
+    }
 
     // const postId = +req.params.id
     //

@@ -32,7 +32,7 @@ export const postsRepository = {
                 "bloggerName": post.bloggerName
             }
         } catch (error) {
-            console.log(error)
+            console.error(error)
         }
     },
 

@@ -86,6 +86,6 @@ postsRouter.delete('/:id',
 
         const {id} = req.body
         await postsServices.deletePostById(+id)
-        res.sendStatus(204)
+        res.status(204)
         return
     })
