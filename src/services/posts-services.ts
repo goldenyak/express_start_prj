@@ -34,10 +34,7 @@ export const postsServices = {
 
     async updatePostById(id: number, title: string, shortDescription: string, content: string, bloggerId: number) {
         const bloggerById = await bloggersRepository.getBloggerById(bloggerId)
-        if (bloggerById) {
-            await postsRepository.updatePostById(id, title, shortDescription, content, bloggerId, bloggerById.name)
-        }
-        // bloggerById?.name && await postsRepository.updatePostById(id, title, shortDescription, content, bloggerId, bloggerById?.name)
+        bloggerById?.name && await postsRepository.updatePostById(id, title, shortDescription, content, bloggerId, bloggerById?.name)
         return
     },
 

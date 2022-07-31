@@ -16,9 +16,9 @@ export const postsRepository = {
         return [countOfPosts, posts]
     },
     async getPostById(id: number) {
-        // const filter = {id: id}
-        const post = await postsCollection.findOne({id: id}, {projection: {_id: 0}})
-        return post
+
+        const findPost = await postsCollection.findOne({id: id}, {projection: {_id: 0}})
+        return findPost
     },
     async createNewPost(post: postsType) {
         try {

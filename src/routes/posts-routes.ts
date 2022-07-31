@@ -28,10 +28,15 @@ postsRouter.get('/',
         res.status(200).send(posts)
         return;
     });
-postsRouter.get('/:id', postIdValidation, async (req: Request, res: Response) => {
-    const postById = await postsRepository.getPostById(+req.params.id)
-    res.status(200).send(postById)
-})
+
+postsRouter.get('/:id',
+    postIdValidation,
+    async (req: Request, res: Response) => {
+
+        await postsServices.getPostById(+req.params.id)
+        res.status(200)
+        return;
+    })
 
 postsRouter.post('/',
     authMiddleware,
