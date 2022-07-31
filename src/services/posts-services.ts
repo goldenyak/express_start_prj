@@ -39,6 +39,11 @@ export const postsServices = {
         }
         // bloggerById?.name && await postsRepository.updatePostById(id, title, shortDescription, content, bloggerId, bloggerById?.name)
         return
+    },
+
+    async deletePostById(id: number) {
+        await postsRepository.deletePostById(id)
+        return
     }
 
 }

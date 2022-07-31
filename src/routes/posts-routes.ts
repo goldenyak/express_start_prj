@@ -73,16 +73,14 @@ postsRouter.put('/:id',
     })
 
 
-postsRouter.delete('/:id', authMiddleware, postIdValidation,
+postsRouter.delete('/:id',
+    authMiddleware,
+    postIdValidation,
+    inputValidation,
     async (req: Request, res: Response) => {
-        const postById = await postsRepository.getPostById(+req.params.id)
-        if (postById) {
-            await postsRepository.deletePostById(+req.params.id)
-            res.sendStatus(204)
-            return
-        } else {
-            res.sendStatus(404)
-            return
-        }
 
+        const {id} = req.body
+        await postsServices.deletePostById(+id)
+        res.sendStatus(204)
+        return
     })

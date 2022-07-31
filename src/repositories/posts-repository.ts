@@ -36,7 +36,7 @@ export const postsRepository = {
         }
     },
 
-    async updatePostById(id: number, title: string, shortDescription: string, content: string, bloggerId: number, bloggerName: string): Promise<any> {
+    async updatePostById(id: number, title: string, shortDescription: string, content: string, bloggerId: number, bloggerName: string) {
         const post = await postsRepository.getPostById(id)
 
         const updatedPost = postsCollection.updateOne({id: id}, {
@@ -51,11 +51,9 @@ export const postsRepository = {
         return updatedPost;
     },
 
-    async deletePostById(id: number): Promise<any> {
-        if (id) {
-            return postsCollection.deleteOne({id: id})
-        } else {
-            return postsCollection.find({}).toArray()
-        }
+    async deletePostById(id: number) {
+        const filter = {id: id}
+        await postsCollection.deleteOne(filter)
+        return
     }
 }
