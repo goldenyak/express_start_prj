@@ -10,7 +10,7 @@ export const bloggerServices = {
             page: pageNumber,
             pageSize: pageSize,
             totalCount: bloggersItem[0],
-            items: [bloggersItem[1]]
+            items: bloggersItem[1]
         }
     },
 

@@ -18,6 +18,7 @@ export const bloggersRouter = Router({})
 bloggersRouter.get('/',
     query('PageNumber').isInt().optional({checkFalsy: true}),
     query('PageSize').isInt().optional({checkFalsy: true}),
+    inputValidation,
     async (req: Request, res: Response) => {
 
         const searchNameTerm = req.query.SearchNameTerm?.toString()
