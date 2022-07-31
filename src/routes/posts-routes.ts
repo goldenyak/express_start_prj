@@ -19,6 +19,7 @@ export const postsRouter = Router({})
 postsRouter.get('/',
     query('PageNumber').isInt().optional({checkFalsy: true}),
     query('PageSize').isInt().optional({checkFalsy: true}),
+    inputValidation,
     async (req: Request, res: Response) => {
 
         const pageNumber = req.query.PageNumber ? Number(req.query.PageNumber) : 1
