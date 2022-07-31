@@ -15,7 +15,7 @@ export const postsServices = {
     },
 
     async getPostById(id: number) {
-        return postsRepository.getPostById(id)
+        return await postsRepository.getPostById(id)
     },
 
     async createNewPost(title: string, shortDescription: string, content: string, bloggerId: number) {
@@ -39,8 +39,8 @@ export const postsServices = {
     },
 
     async deletePostById(id: number) {
-        await postsRepository.deletePostById(id)
-        return
+        return await postsRepository.deletePostById(id)
+
     }
 
 }

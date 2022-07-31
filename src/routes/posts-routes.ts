@@ -32,10 +32,12 @@ postsRouter.get('/',
 postsRouter.get('/:id',
     postIdValidation,
     async (req: Request, res: Response) => {
-
-        await postsServices.getPostById(+req.params.id)
-        res.status(200)
-        return;
+        const foundPost = await postsServices.getPostById(+req.params.id)
+        if (foundPost) {
+            res.status(200).send(foundPost)
+            return;
+        }
+        res.sendStatus(404);
     })
 
 postsRouter.post('/',
@@ -84,8 +86,11 @@ postsRouter.delete('/:id',
     inputValidation,
     async (req: Request, res: Response) => {
 
-        const {id} = req.body
-        await postsServices.deletePostById(+id)
-        res.status(204)
+        const deletedPost = await postsServices.deletePostById(+req.params.id)
+
+        if(deletedPost) {
+            res.status(204).send()
+            return
+        }
         return
-    })
+     })

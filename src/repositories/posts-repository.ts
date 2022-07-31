@@ -52,8 +52,8 @@ export const postsRepository = {
     },
 
     async deletePostById(id: number) {
-        const filter = {id: id}
-        await postsCollection.deleteOne(filter)
-        return
+
+        const deletedPost = await postsCollection.deleteOne({id: id})
+        return deletedPost
     }
 }

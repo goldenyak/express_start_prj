@@ -28,7 +28,10 @@ bloggersRouter.get('/',
         res.status(200).send(bloggers)
         return;
     });
-bloggersRouter.get('/:id', bloggerIdValidation, async (req: Request, res: Response) => {
+bloggersRouter.get('/:id',
+    bloggerIdValidation,
+    async (req: Request, res: Response) => {
+
     const foundBlogger = await bloggerServices.getBloggerById(+req.params.id)
     if (foundBlogger) {
         res.status(200).send(foundBlogger)
