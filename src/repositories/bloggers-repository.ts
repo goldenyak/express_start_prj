@@ -40,10 +40,8 @@ export const bloggersRepository = {
         return updatedBlogger
     },
     async deleteBloggerById(id: number) {
-        if (id) {
-            return await bloggersCollection.deleteOne({id: id})
-        } else {
-            return await bloggersCollection.find({}).toArray()
-        }
+        const filter = {id: id}
+        const deletedBlogger = await bloggersCollection.deleteOne(filter)
+        return deletedBlogger
     }
 }
