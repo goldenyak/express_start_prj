@@ -8,6 +8,8 @@ export const client = new MongoClient(mongoUri);
 
 export const bloggersCollection = client.db("express-project").collection<bloggersType>("bloggers");
 export const postsCollection = client.db("express-project").collection<postsType>("posts");
+export const usersCollection = client.db("express-project").collection<any>("users");
+export const commentsCollection = client.db("express-project").collection<any>("comments");
 
 export async function runDb() {
     try {

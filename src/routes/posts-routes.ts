@@ -1,7 +1,6 @@
 import {Request, Response, Router} from 'express'
-import {postsRepository} from "../repositories/posts-repository";
 import {postIdValidation} from "../validation/posts/post-id-validation";
-import {body, query} from "express-validator";
+import {body, param, query} from "express-validator";
 import {bloggersRepository} from "../repositories/bloggers-repository";
 import {authMiddleware} from "../middlewares/auth-middleware";
 import {titleValidation} from "../validation/posts/title-validation";
@@ -10,9 +9,9 @@ import {
 } from "../validation/posts/short-description-validation";
 import {contentValidation} from "../validation/posts/content-validation";
 import {inputValidation} from "../validation/errors/input-validation";
-import {bloggerServices} from "../services/blogger-services";
 import {postsServices} from "../services/posts-services";
-import {bloggerIdValidation} from "../validation/bloggers/blogger-id-validation";
+import {commentsServices} from "../services/comments-services";
+import {commentsRepository} from "../repositories/comments-repository";
 
 export const postsRouter = Router({})
 
@@ -58,6 +57,35 @@ postsRouter.post('/',
         return;
     })
 
+postsRouter.get('/:postId/comments',
+    postIdValidation,
+    inputValidation,
+    query('PageNumber').isInt().optional({checkFalsy: true}),
+    query('PageSize').isInt().optional({checkFalsy: true}),
+    async (req: Request, res: Response) => {
+        const pageNumber = req.query.PageNumber ? Number(req.query.PageNumber) : 1
+        const pageSize = req.query.PageSize ? Number(req.query.PageSize) : 10
+
+        res.status(200).send(await commentsServices.getCommentsByPostId(req.params.postId, pageNumber, pageSize))
+        return
+    })
+
+postsRouter.post('/:postId/comments',
+    authMiddleware,
+    param('postId').isInt(),
+    body('content').trim().notEmpty().isLength({min: 20, max: 300 }),
+    postIdValidation,
+    async (req: Request, res: Response) => {
+        const {content} = req.body
+
+        if (req.user) {
+            res.status(201).send(await commentsServices.createComment(req.params.postId, content, req.user))
+            return
+        }
+        res.sendStatus(401)
+        return
+    })
+
 postsRouter.put('/:id',
     authMiddleware,
     // bloggerIdValidation,
@@ -92,4 +120,4 @@ postsRouter.delete('/:id',
         res.sendStatus(204)
         return
 
-     })
+    })

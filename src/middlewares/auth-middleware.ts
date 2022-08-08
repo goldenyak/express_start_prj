@@ -1,27 +1,40 @@
 import {NextFunction, Request, Response} from "express";
+import {authServices} from "../services/auth-services";
+import {userServices} from "../services/user-services";
 
-export const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
-    // if (!req.headers.authorization) {
-    //     res.sendStatus(401)
-    //     return
-    // }
-    // const authType: string | undefined = req.headers.authorization?.split(" ")[0].toString() || undefined
-    // const authPhrase: string = req.headers.authorization?.split(" ")[1].toString()
-    // //Basic auth
-    // if (authType === 'Basic') {
-    //     const authorized = authPhrase === 'YWRtaW46cXdlcnR5'
-    //     authorized && next()
-    //     return
-    const authorized: boolean = req.headers.authorization?.split(" ")[1].toString() === 'YWRtaW46cXdlcnR5'
-    const authType: string = req.headers.authorization?.split(" ")[0].toString() || 'no auth'
-
-    if (req.headers.authorization && authType === 'Basic' && authorized === true) {
-        next()
-        return;
-    } else {
+export const authMiddleware = async (req: Request, res: Response, next: NextFunction) => {
+    if (!req.headers.authorization) {
         res.sendStatus(401)
-        return;
+        return
     }
+    const authType: string | undefined = req.headers.authorization?.split(" ")[0].toString() || undefined
+    const authPhrase: string = req.headers.authorization?.split(" ")[1].toString()
+
+    //Basic auth
+    if (authType === 'Basic') {
+        if (authPhrase === 'YWRtaW46cXdlcnR5') {
+            next()
+            return
+        } else {
+            res.sendStatus(401)
+            return
+        }
+    }
+
+    // JWT auth
+    if (authType === 'Bearer') {
+        const userId = authServices.checkAuthToken(authPhrase)
+        if (userId) {
+            console.log("JWT auth", userId)
+            // @ts-ignore
+            req.user = await userServices.getUserById(userId)
+            next()
+            return
+        }
+    }
+
+    res.sendStatus(401)
+    return
 
 
     if (req.headers["content-type"] === "application/json") {

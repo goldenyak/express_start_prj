@@ -4,14 +4,20 @@ import bodyParser from "body-parser";
 import {bloggersRouter} from "./routes/bloggers-routes";
 import {postsRouter} from "./routes/posts-routes";
 import {runDb} from "./db/db";
+import {authRouter} from "./routes/auth-routes";
+import {userRouter} from "./routes/user-routes";
+import {commentsRouter} from "./routes/comments-routes";
 
 
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
-app.use('/bloggers', bloggersRouter)
-app.use('/posts', postsRouter)
+app.use('/auth', authRouter);
+app.use('/users', userRouter);
+app.use('/bloggers', bloggersRouter);
+app.use('/posts', postsRouter);
+app.use('/comments', commentsRouter);
 
 const port = process.env.PORT || 5000
 

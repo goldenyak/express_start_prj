@@ -7,11 +7,8 @@ import {inputValidation} from "../validation/errors/input-validation";
 import {bloggerServices} from "../services/blogger-services";
 import {param, query} from "express-validator";
 import {titleValidation} from "../validation/posts/title-validation";
-import {
-    shortDescriptionValidation
-} from "../validation/posts/short-description-validation";
+import {shortDescriptionValidation} from "../validation/posts/short-description-validation";
 import {contentValidation} from "../validation/posts/content-validation";
-import {bloggersRepository} from "../repositories/bloggers-repository";
 
 export const bloggersRouter = Router({})
 

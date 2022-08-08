@@ -3,13 +3,6 @@ import {bloggersCollection} from "../../db/db";
 import {bloggersRepository} from "../../repositories/bloggers-repository";
 
 export const bloggerIdValidation =  async (req: Request, res: Response, next: NextFunction) => {
-    // const bloggerId = +req.params.id
-    // if (!bloggersCollection.findOne({id: bloggerId})) {
-    //     res.status(404)
-    //     return
-    // } else {
-    //     next()
-    // }
 
     const bloggerId = +req.params.bloggerId || +req.params.id ||  null
     if(bloggerId && !await bloggersRepository.getBloggerById(bloggerId)) {
