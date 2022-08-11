@@ -9,7 +9,6 @@ import {userIdValidation} from "../validation/users/user-id-validation";
 export const userRouter = Router({});
 
 userRouter.get('/',
-    authMiddleware,
     async (req: Request, res: Response) => {
         const pageNumber = req.query.PageNumber ? Number(req.query.PageNumber) : 1
         const pageSize = req.query.PageSize ? Number(req.query.PageSize) : 10
