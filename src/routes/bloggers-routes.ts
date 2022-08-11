@@ -29,13 +29,8 @@ bloggersRouter.get('/',
 bloggersRouter.get('/:id',
     bloggerIdValidation,
     async (req: Request, res: Response) => {
-
-    const foundBlogger = await bloggerServices.getBloggerById(+req.params.id)
-    if (foundBlogger) {
-        res.status(200).send(foundBlogger)
-        return;
-    }
-    res.sendStatus(404);
+        res.status(200).send(await bloggerServices.getBloggerById(req.params.id))
+        return
 })
 bloggersRouter.post('/',
     authMiddleware,
@@ -54,12 +49,12 @@ bloggersRouter.put('/:id', authMiddleware, bloggerIdValidation, youtubeUrlValida
     const {name, youtubeUrl} = req.body
     const {id} = req.params
 
-    const updatedBlogger = await bloggerServices.updateBloggerById(name, youtubeUrl, +id)
+    const updatedBlogger = await bloggerServices.updateBloggerById(name, youtubeUrl, id)
     updatedBlogger && res.sendStatus(204)
     return;
 })
 bloggersRouter.delete('/:id', authMiddleware, bloggerIdValidation, async (req: Request, res: Response) => {
-    await bloggerServices.deleteBloggerById(+req.params.id)
+    await bloggerServices.deleteBloggerById(req.params.id)
     res.sendStatus(204)
     return;
 })
@@ -72,7 +67,7 @@ bloggersRouter.get('/:bloggerId/posts',
         const pageNumber = req.query.PageNumber ? Number(req.query.PageNumber) : 1
         const pageSize = req.query.PageSize ? Number(req.query.PageSize) : 10
 
-        res.status(200).send(await bloggerServices.getBloggerPosts(pageNumber, pageSize, +req.params.bloggerId))
+        res.status(200).send(await bloggerServices.getBloggerPosts(pageNumber, pageSize, req.params.bloggerId))
         return
     })
 
@@ -87,7 +82,7 @@ bloggersRouter.post('/:bloggerId/posts',
     async (req: Request, res: Response) => {
         const {title, shortDescription, content} = req.body
 
-        res.status(201).send(await bloggerServices.createBloggerPost(title, shortDescription, content, +req.params.bloggerId))
+        res.status(201).send(await bloggerServices.createBloggerPost(title, shortDescription, content, req.params.bloggerId))
 
         return
     })

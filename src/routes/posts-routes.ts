@@ -32,7 +32,7 @@ postsRouter.get('/',
 postsRouter.get('/:id',
     postIdValidation,
     async (req: Request, res: Response) => {
-        const foundPost = await postsServices.getPostById(+req.params.id)
+        const foundPost = await postsServices.getPostById(req.params.id)
         if (foundPost) {
             res.status(200).send(foundPost)
             return;
@@ -57,35 +57,6 @@ postsRouter.post('/',
         return;
     })
 
-postsRouter.get('/:postId/comments',
-    postIdValidation,
-    inputValidation,
-    query('PageNumber').isInt().optional({checkFalsy: true}),
-    query('PageSize').isInt().optional({checkFalsy: true}),
-    async (req: Request, res: Response) => {
-        const pageNumber = req.query.PageNumber ? Number(req.query.PageNumber) : 1
-        const pageSize = req.query.PageSize ? Number(req.query.PageSize) : 10
-
-        res.status(200).send(await commentsServices.getCommentsByPostId(req.params.postId, pageNumber, pageSize))
-        return
-    })
-
-postsRouter.post('/:postId/comments',
-    authMiddleware,
-    param('postId').isInt(),
-    body('content').trim().notEmpty().isLength({min: 20, max: 300 }),
-    postIdValidation,
-    async (req: Request, res: Response) => {
-        const {content} = req.body
-
-        if (req.user) {
-            res.status(201).send(await commentsServices.createComment(req.params.postId, content, req.user))
-            return
-        }
-        res.sendStatus(401)
-        return
-    })
-
 postsRouter.put('/:id',
     authMiddleware,
     // bloggerIdValidation,
@@ -103,11 +74,10 @@ postsRouter.put('/:id',
 
         const {title, shortDescription, content, bloggerId} = req.body
         // const blogger = await bloggersRepository.getBloggerById(bloggerId)
-        await postsServices.updatePostById(+req.params.id, title, shortDescription, content, bloggerId)
+        await postsServices.updatePostById(req.params.id, title, shortDescription, content, bloggerId)
         res.sendStatus(204)
         return
     })
-
 
 postsRouter.delete('/:id',
     authMiddleware,
@@ -115,9 +85,38 @@ postsRouter.delete('/:id',
     inputValidation,
     async (req: Request, res: Response) => {
 
-        await postsServices.deletePostById(+req.params.id)
+        await postsServices.deletePostById(req.params.id)
 
         res.sendStatus(204)
         return
+    })
 
+postsRouter.get('/:postId/comments',
+    postIdValidation,
+    inputValidation,
+    query('PageNumber').isInt().optional({checkFalsy: true}),
+    query('PageSize').isInt().optional({checkFalsy: true}),
+    async (req: Request, res: Response) => {
+        const pageNumber = req.query.PageNumber ? Number(req.query.PageNumber) : 1
+        const pageSize = req.query.PageSize ? Number(req.query.PageSize) : 10
+
+        res.status(200).send(await commentsServices.getCommentsByPostId(req.params.postId, pageNumber, pageSize))
+        return
+    })
+
+postsRouter.post('/:postId/comments',
+    authMiddleware,
+    param('postId').isInt(),
+    body('content').trim().notEmpty().isLength({min: 20, max: 300}),
+    postIdValidation,
+    inputValidation,
+    async (req: Request, res: Response) => {
+        const {content} = req.body
+        // console.log(req.user)
+        if (req.user) {
+            res.status(201).send(await commentsServices.createComment(req.params.postId, content, req.user))
+            return
+        }
+        res.sendStatus(401)
+        return
     })

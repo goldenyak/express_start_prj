@@ -1,8 +1,14 @@
 import {commentsCollection} from "../db/db";
+import {ObjectId} from "mongodb";
+import {userType} from "../types/user-type";
 
 export const commentsRepository = {
     async getAllComments() {
 
+    },
+
+    async createComment(newComment: any) {
+        return await commentsCollection.insertOne(newComment)
     },
 
     async getCommentsByPostId(postId: string, pageNumber: number, pageSize: number) {
@@ -21,7 +27,43 @@ export const commentsRepository = {
             .toArray()
     },
 
+    async getCommentById(id: string) {
+        const comments = await commentsCollection.aggregate([
+            {
+                $match: {
+                    _id: new ObjectId(id)
+                }
+            },
+            {
+                $project:
+                    {
+                        "id": {$toString: "$_id"},
+                        _id: 0,
+                        "content": 1,
+                        "userId": 1,
+                        "userLogin": 1,
+                        "addedAt": 1
+                    }
+            },
+        ]).toArray()
+
+        return comments[0]
+
+        // const commentById = await commentsCollection.findOne({id: id})
+        // console.log(commentById)
+        // return commentById
+
+    },
+
     async countComments(postId: string) {
         return await commentsCollection.countDocuments({postId: postId})
+    },
+
+    async deleteComment(commentId: ObjectId) {
+        return await commentsCollection.deleteOne({_id: commentId})
+    },
+
+    async updateCommentById(id: ObjectId, content: string) {
+        return await commentsCollection.updateOne({_id: id}, {$set: {content: content}})
     }
 }

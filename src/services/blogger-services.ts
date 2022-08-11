@@ -14,30 +14,34 @@ export const bloggerServices = {
         }
     },
 
-    async getBloggerById(id: number) {
-        const foundedBlogger = await bloggersRepository.getBloggerById(id)
-        return foundedBlogger
+    async getBloggerById(id: string) {
+        return await bloggersRepository.getBloggerById(id)
     },
 
     async createNewBlogger(name: string, youtubeUrl: string) {
         const newBlogger = {
-            _id: new ObjectId(),
-            id: +(new Date()),
-            name: name,
-            youtubeUrl: youtubeUrl
+            "_id": new ObjectId(),
+            "id": Number(new Date()).toString(),
+            "name": name,
+            "youtubeUrl": youtubeUrl
         }
-        return await bloggersRepository.createNewBlogger(newBlogger)
+        await bloggersRepository.createNewBlogger(newBlogger)
+        return {
+            "id": newBlogger.id,
+            "name": newBlogger.name,
+            "youtubeUrl": newBlogger.youtubeUrl
+        }
     },
 
-    async updateBloggerById(newName: string, newYoutubeUrl: string, id: number) {
+    async updateBloggerById(newName: string, newYoutubeUrl: string, id: string) {
         return await bloggersRepository.updateBloggerById(newName, newYoutubeUrl, id)
     },
 
-    async deleteBloggerById(id: number) {
+    async deleteBloggerById(id: string) {
         return await bloggersRepository.deleteBloggerById(id)
     },
 
-    async getBloggerPosts(pageNumber: number, pageSize: number, bloggerId: number) {
+    async getBloggerPosts(pageNumber: number, pageSize: number, bloggerId: string) {
         const postsData = await postsRepository.getAllPosts(pageNumber, pageSize, bloggerId)
         const pagesCount = Math.ceil(postsData[0] / pageSize)
         return {
@@ -49,16 +53,16 @@ export const bloggerServices = {
         }
     },
 
-    async createBloggerPost(title: string, shortDescription: string, content: string, bloggerId: number) {
+    async createBloggerPost(title: string, shortDescription: string, content: string, bloggerId: string) {
         const bloggerById = await bloggersRepository.getBloggerById(bloggerId)
         return postsRepository.createNewPost({
             "_id": new ObjectId(),
-            "id": Number(new Date()),
+            "id": String(new Date()),
             "title": title,
             "shortDescription": shortDescription,
             "content": content,
             "bloggerId": bloggerId,
-            "bloggerName" : bloggerById?.name || ''
+            "bloggerName": bloggerById?.name || ''
         })
     }
 }

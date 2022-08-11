@@ -1,4 +1,6 @@
 import {usersCollection} from "../db/db";
+import {userType} from "../types/user-type";
+import {ObjectId} from "mongodb";
 
 export const usersRepository = {
     async getAllUsers(pageNumber: number, pageSize: number): Promise<[number, Object[]]> {
@@ -16,7 +18,7 @@ export const usersRepository = {
         return [countOfUsers, allUsers]
     },
 
-    async createNewUser(newUser: any) {
+    async createNewUser(newUser: userType) {
         return await usersCollection.insertOne(newUser)
     },
 
@@ -24,11 +26,16 @@ export const usersRepository = {
         return await usersCollection.findOne({login: login})
     },
 
-    async deleteUserById(id: string) {
+    async deleteUserById(id: ObjectId) {
         return await usersCollection.deleteOne({_id: id});
     },
 
-    async getUserById(id: Promise<string | null>) {
-        return await usersCollection.findOne({_id: id})
+    async getUserById(filter: ObjectId | string) {
+        if(typeof filter === "string") {
+            return usersCollection.findOne({"userData.login": filter});
+        }
+        else {
+            return usersCollection.findOne({_id: filter});
+        }
     }
 }

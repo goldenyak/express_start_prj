@@ -1,8 +1,5 @@
 import {Request, Response, Router} from "express";
 import {userServices} from "../services/user-services";
-import {generateAccessToken} from "../utils/generateAccessToken";
-import bcrypt from "bcrypt";
-import {v4 as uuidv4} from 'uuid';
 import {body} from "express-validator";
 import {authMiddleware} from "../middlewares/auth-middleware";
 import {inputValidation} from "../validation/errors/input-validation";
@@ -25,8 +22,7 @@ userRouter.get('/',
 userRouter.get('/:id',
     authMiddleware,
     async (req: Request, res: Response) => {
-        const userById = await userServices.getUserById(req.params.id);
-        res.status(200).send(userById)
+        res.status(200).send(await userServices.getUserById(req.params.id))
         return;
     });
 

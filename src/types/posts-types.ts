@@ -2,7 +2,7 @@ import {ObjectId, WithId} from "mongodb";
 
 export interface postInterface extends WithId<Document>{
     "_id": ObjectId,
-    "id": number,
+    "id": string,
     "title": string,
     "shortDescription": string,
     "content": string,
@@ -12,10 +12,10 @@ export interface postInterface extends WithId<Document>{
 
 export type postsType = {
     "_id": ObjectId,
-    "id": number,
+    "id": string,
     "title": string,
     "shortDescription": string,
     "content": string,
-    "bloggerId": number,
+    "bloggerId": string,
     "bloggerName": string
 }

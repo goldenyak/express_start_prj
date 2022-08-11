@@ -1,7 +1,6 @@
 import {usersRepository} from "../repositories/users-repository";
 import bcrypt from "bcrypt";
-import {v4 as uuidv4} from "uuid";
-import {generateAccessToken} from "../utils/generateAccessToken";
+import {ObjectId} from "mongodb";
 
 export const userServices = {
     async getAllUsers(pageNumber: number, pageSize: number) {
@@ -21,9 +20,9 @@ export const userServices = {
         const hashPassword = bcrypt.hashSync(password, 10)
 
         const newUser = await usersRepository.createNewUser({
-            "_id": uuidv4(),
-            "login": login,
-            "password": hashPassword
+            _id: new ObjectId(),
+            login: login,
+            password: hashPassword
         })
 
         if (newUser.insertedId) {
@@ -41,12 +40,13 @@ export const userServices = {
     },
 
     async deleteUserById(id: string) {
-        return await usersRepository.deleteUserById(id)
+        return await usersRepository.deleteUserById(new ObjectId(id))
     },
 
-    async getUserById(id: Promise<string | null>) {
+    async getUserById(id: string) {
         try {
-            return await usersRepository.getUserById(id)
+            return await usersRepository.getUserById(new ObjectId(id))
+            // return await usersRepository.getUserById(id)
         } catch (error) {
             return null
         }
@@ -54,7 +54,7 @@ export const userServices = {
 
     async checkPassword(login: string, password: string) {
         const findUser = await usersRepository.findUser(login)
-        return bcrypt.compareSync(password, findUser.password)
+        return bcrypt.compareSync(password, findUser!.password)
     },
 
 }

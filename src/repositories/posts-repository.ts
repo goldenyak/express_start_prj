@@ -2,7 +2,7 @@ import {postsCollection} from "../db/db";
 import {postsType} from "../types/posts-types";
 
 export const postsRepository = {
-    async getAllPosts(pageNumber: number, pageSize: number, bloggerId?: number): Promise<[number, Object[]]> {
+    async getAllPosts(pageNumber: number, pageSize: number, bloggerId?: string): Promise<[number, Object[]]> {
         const filter = bloggerId ? {bloggerId: bloggerId} : {}
 
         const countOfPosts = await postsCollection.countDocuments(filter);
@@ -15,10 +15,13 @@ export const postsRepository = {
 
         return [countOfPosts, posts]
     },
-    async getPostById(id: number) {
+    async getPostById(id: string) {
 
-        const findPost = await postsCollection.findOne({id: id}, {projection: {_id: 0}})
-        return findPost
+        const filter = {id: id}
+        return await postsCollection.findOne(filter, {projection: {_id: 0}})
+
+        // const findPost = await postsCollection.findOne({id: id}, {projection: {_id: 0}})
+        // return findPost
     },
     async createNewPost(post: postsType) {
         try {
@@ -36,7 +39,7 @@ export const postsRepository = {
         }
     },
 
-    async updatePostById(id: number, title: string, shortDescription: string, content: string, bloggerId: number, bloggerName: string) {
+    async updatePostById(id: string, title: string, shortDescription: string, content: string, bloggerId: string, bloggerName: string) {
         const post = await postsRepository.getPostById(id)
 
         const updatedPost = postsCollection.updateOne({id: id}, {
@@ -51,7 +54,7 @@ export const postsRepository = {
         return updatedPost;
     },
 
-    async deletePostById(id: number) {
+    async deletePostById(id: string) {
 
         await postsCollection.deleteOne({id: id})
         return
