@@ -14,20 +14,25 @@ authRouter.post('/login',
 
             const findUser = await userServices.findUser(login)
             if (!findUser) {
-                res.status(401).json({
-                    message: "Такого имени пользователя не существует."
-                })
+                res.sendStatus(401)
+                return
+                // res.status(401).json({
+                //     message: "Такого имени пользователя не существует."
+                // })
+                // return
             }
 
             const isPasswordCorrect = await userServices.checkPassword(login, password);
             if (!isPasswordCorrect) {
-                res.status(401).json({
-                    message: "Вы ввели неправильный пароль"
-                })
+                res.sendStatus(401)
+                return
+                // res.status(401).json({
+                //     message: "Вы ввели неправильный пароль"
+                // })
+                // return
             }
 
             const token = await authServices.createToken(login);
-
             res.status(200).json({
                 token
             })
