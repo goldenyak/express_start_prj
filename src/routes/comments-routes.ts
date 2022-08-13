@@ -45,15 +45,29 @@ commentsRouter.delete('/:commentId',
     async (req: Request, res: Response) => {
         const isCommentId = await commentsServices.getCommentById(req.params.commentId)
 
+        // if (isCommentId?.userId === req.user?._id.toString()) {
+        //     await commentsServices.deleteComment(req.params.commentId)
+        //     res.sendStatus(204)
+        //     return
+        // } else {
+        //     res.sendStatus(404)
+        //     return
+        // }
+        // res.sendStatus(403)
+        // return
+
         if (isCommentId?.userId === req.user?._id.toString()) {
             await commentsServices.deleteComment(req.params.commentId)
             res.sendStatus(204)
             return
-        } else {
+        }
+        if(isCommentId?.userId !== req.user?._id.toString()) {
             res.sendStatus(403)
             return
         }
-        res.sendStatus(404)
-        return
+        if(!isCommentId?.userId) {
+            res.sendStatus(404)
+            return
+        }
     }
 );
