@@ -40,20 +40,18 @@ userRouter.post('/',
                     message: "Данный username уже занят!"
                 })
             }
-
-            const newUser = await userServices.createNewUser(login, password);
-
-            res.status(200).send({
-                newUser,
-                message: "Регистрация прошла успешно!"
-            })
+            await userServices.createNewUser(login, password);
+            res.sendStatus(201)
             return
 
         } catch (error) {
-            res.json({
+            res.status(400).json({
                 message: "Ошибка при создании пользователя"
             })
         }
+
+        res.sendStatus(401)
+        return
     },
 
     userRouter.delete('/:id',
