@@ -1,6 +1,7 @@
 import {Request, Response, Router} from "express";
 import {commentsServices} from "../services/comments-services";
 import {authMiddleware} from "../middlewares/auth-middleware";
+import {body} from "express-validator";
 
 
 export const commentsRouter = Router({})
@@ -21,6 +22,7 @@ commentsRouter.get('/:id',
 
 commentsRouter.put('/:commentId',
     authMiddleware,
+    body('content').trim().notEmpty().isLength({min: 20, max: 300}),
     async (req: Request, res: Response) => {
         const isCommentId = await commentsServices.getCommentById(req.params.commentId)
 
@@ -30,7 +32,7 @@ commentsRouter.put('/:commentId',
             res.sendStatus(204)
             return
         } else {
-            res.sendStatus(403)
+            res.sendStatus(404)
             return
         }
     }
