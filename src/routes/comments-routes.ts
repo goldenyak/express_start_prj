@@ -26,13 +26,18 @@ commentsRouter.put('/:commentId',
     body('content').trim().notEmpty().isLength({min: 20, max: 300}),
     inputValidation,
     async (req: Request, res: Response) => {
-        const isCommentId = await commentsServices.getCommentById(req.params.commentId)
+        const isCommentById = await commentsServices.getCommentById(req.params.commentId)
 
-        if (isCommentId?.userId === req.user?._id.toString()) {
-            console.log(isCommentId?.userId === req.user?._id.toString())
-            await commentsServices.updateCommentById(req.params.commentId, req.body.content)
-            res.sendStatus(204)
-            return
+        if (isCommentById) {
+            const currentUserId = req.user!._id.toString()
+            if (currentUserId === isCommentById.userId) {
+                await commentsServices.updateCommentById(req.params.commentId, req.body.content)
+                res.sendStatus(204)
+                return
+            } else {
+                res.sendStatus(403)
+                return
+            }
         } else {
             res.sendStatus(404)
             return
@@ -43,29 +48,19 @@ commentsRouter.put('/:commentId',
 commentsRouter.delete('/:commentId',
     authMiddleware,
     async (req: Request, res: Response) => {
-        const isCommentId = await commentsServices.getCommentById(req.params.commentId)
+        const isCommentById = await commentsServices.getCommentById(req.params.commentId)
 
-        // if (isCommentId?.userId === req.user?._id.toString()) {
-        //     await commentsServices.deleteComment(req.params.commentId)
-        //     res.sendStatus(204)
-        //     return
-        // } else {
-        //     res.sendStatus(404)
-        //     return
-        // }
-        // res.sendStatus(403)
-        // return
-
-        if (isCommentId?.userId === req.user?._id.toString()) {
-            await commentsServices.deleteComment(req.params.commentId)
-            res.sendStatus(204)
-            return
-        }
-        if(isCommentId?.userId !== req.user?._id.toString()) {
-            res.sendStatus(403)
-            return
-        }
-        if(!isCommentId?.userId) {
+        if (isCommentById) {
+            const currentUserId = req.user!._id.toString()
+            if (currentUserId === isCommentById.userId) {
+                await commentsServices.deleteComment(req.params.commentId)
+                res.sendStatus(204)
+                return
+            } else {
+                res.sendStatus(403)
+                return
+            }
+        } else {
             res.sendStatus(404)
             return
         }

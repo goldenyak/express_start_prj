@@ -6,9 +6,6 @@ import {ObjectId} from "mongodb";
 import {userType} from "../types/user-type";
 
 export const commentsServices = {
-    async getAllComments() {
-
-    },
 
     async getCommentById(id: string) {
         try {
