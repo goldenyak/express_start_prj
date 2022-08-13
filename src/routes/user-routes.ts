@@ -40,8 +40,7 @@ userRouter.post('/',
                     message: "Данный username уже занят!"
                 })
             }
-            await userServices.createNewUser(login, password);
-            res.sendStatus(201)
+            res.status(201).send(await userServices.createNewUser(login, password))
             return
 
         } catch (error) {
