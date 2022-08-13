@@ -14,14 +14,14 @@ authRouter.post('/login',
 
             const findUser = await userServices.findUser(login)
             if (!findUser) {
-                res.json({
+                res.status(401).json({
                     message: "Такого имени пользователя не существует."
                 })
             }
 
             const isPasswordCorrect = await userServices.checkPassword(login, password);
             if (!isPasswordCorrect) {
-                res.json({
+                res.status(401).json({
                     message: "Вы ввели неправильный пароль"
                 })
             }
