@@ -13,21 +13,15 @@ authRouter.post('/registration', async (req: Request, res: Response) => {
         const isUsed = await userServices.getUserByLogin(login)
         const isEmail = await authServices.checkEmail(email)
         if (isUsed) {
-            return res.json({
-                message: "Данный username уже занят!"
-            })
+            return res.json("Данный username уже занят!")
         }
         if (isEmail) {
-            return res.json({
-                message: "Данный email уже занят!"
-            })
+            return res.json("Данный email уже занят!")
         }
 
         const createdUser = await authServices.registerUser(login, password, email)
-        if(createdUser) {
-            return res.json({
-                message: "USPEH"
-            })
+        if (createdUser) {
+            res.status(204).json("User is was created")
         }
 
     } catch (error) {
@@ -42,24 +36,18 @@ authRouter.post('/login',
             const {login, password} = req.body
             const findUser = await userServices.getUserByLogin(login)
             if (!findUser) {
-                res.status(401).json(
-                    "Invalid name"
-                )
+                res.status(401).json("Invalid name")
                 return
             }
 
             const isPasswordCorrect = await authServices.checkPassword(password, findUser.accountData.password)
             if (!isPasswordCorrect) {
-                res.status(401).json(
-                    "Invalid password"
-                )
+                res.status(401).json("Invalid password")
                 return
             }
 
             const token = await authServices.createToken(login);
-            res.status(200).json({
-                token
-            })
+            res.status(200).json({token})
             return;
 
         } catch (error) {
