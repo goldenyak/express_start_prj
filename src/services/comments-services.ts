@@ -36,7 +36,7 @@ export const commentsServices = {
             _id: new ObjectId(),
             content: content,
             userId: user._id.toString(),
-            userLogin: user.login,
+            userLogin: user.accountData.userName,
             addedAt: new Date(),
             postId: postId
         }

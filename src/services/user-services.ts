@@ -1,60 +1,65 @@
 import {usersRepository} from "../repositories/users-repository";
 import bcrypt from "bcrypt";
 import {ObjectId} from "mongodb";
+import {v4 as uuidv4} from "uuid";
+import add from "date-fns/add";
+import {authServices} from "./auth-services";
 
 export const userServices = {
     async getAllUsers(pageNumber: number, pageSize: number) {
-        const usersData = await usersRepository.getAllUsers(pageNumber, pageSize)
-        const usersCount = Math.ceil(usersData[0] / pageSize)
+        const userCount = await usersRepository.countUsers({})
+        const pagesCount = Math.ceil(userCount / pageSize)
+        const allUsers = await usersRepository.getAllUsers(pageNumber, pageSize)
 
         return {
-            "pagesCount": usersCount,
+            "pagesCount": pagesCount,
             "page": pageNumber,
             "pageSize": pageSize,
-            "totalCount": usersData[0],
-            "items": usersData[1]
+            "totalCount": userCount,
+            "items": allUsers
         }
     },
 
-    async createNewUser(login: string, password: string) {
-        const hashPassword = bcrypt.hashSync(password, 10)
-
+    async createNewUser(login: string, password: string, email: string) {
+        const hashPassword = await authServices.hashPassword(password)
         const newUser = await usersRepository.createNewUser({
             _id: new ObjectId(),
-            login: login,
-            password: hashPassword
+            accountData: {
+                userName: login,
+                password: hashPassword,
+                email: email,
+                createdAt: new Date()
+            },
+            emailConfirmation: {
+                confirmationCode: uuidv4().toString(),
+                expirationDate: add(new Date(), {
+                    hours: 1,
+                    minutes: 3
+                }),
+                isConfirmed: false
+            }
         })
-
         if (newUser.insertedId) {
             return {
                 "id": newUser.insertedId.toString(),
-                "login": login,
+                "login": login
             }
-        } else {
-            return null
-        }
+        } else return null
     },
 
-    async findUser(login: string) {
-        return await usersRepository.findUser(login)
-    },
-
-    async deleteUserById(id: string) {
-        return await usersRepository.deleteUserById(new ObjectId(id))
+    async getUserByLogin(login: string) {
+        return await usersRepository.getUserByLogin(login)
     },
 
     async getUserById(id: string) {
         try {
             return await usersRepository.getUserById(new ObjectId(id))
-            // return await usersRepository.getUserById(id)
         } catch (error) {
             return null
         }
     },
 
-    async checkPassword(login: string, password: string) {
-        const findUser = await usersRepository.findUser(login)
-        return bcrypt.compareSync(password, findUser!.password)
+    async deleteUserById(id: string) {
+        return await usersRepository.deleteUserById(new ObjectId(id))
     },
-
 }

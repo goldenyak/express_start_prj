@@ -13,48 +13,28 @@ userRouter.get('/',
         const pageNumber = req.query.PageNumber ? Number(req.query.PageNumber) : 1
         const pageSize = req.query.PageSize ? Number(req.query.PageSize) : 10
 
-        const users = await userServices.getAllUsers(pageNumber, pageSize);
-        res.status(200).send(users)
-        return;
+        res.status(200).json(await userServices.getAllUsers(pageNumber, pageSize))
     });
 
 userRouter.get('/:id',
-    authMiddleware,
     async (req: Request, res: Response) => {
         res.status(200).send(await userServices.getUserById(req.params.id))
         return;
     });
 
 userRouter.post('/',
-    authMiddleware,
+    // authMiddleware,
     body('login').isLength({min: 3, max: 10}),
     body('password').isLength({min: 6, max: 20}),
+    // body('email').normalizeEmail().isEmail(),
     inputValidation,
     async (req: Request, res: Response) => {
-        try {
-            const {login, password} = req.body
-
-            const isUsed = await userServices.findUser(login)
-            if (isUsed) {
-                return res.json({
-                    message: "Данный username уже занят!"
-                })
-            }
-            res.status(201).send(await userServices.createNewUser(login, password))
-            return
-
-        } catch (error) {
-            res.status(400).json({
-                message: "Ошибка при создании пользователя"
-            })
-        }
-
-        res.sendStatus(401)
-        return
+        const {login, password, email} = req.body
+        res.status(201).json(await userServices.createNewUser(login, password, email))
     },
 
     userRouter.delete('/:id',
-        authMiddleware,
+        // authMiddleware,
         userIdValidation,
         inputValidation,
         async (req: Request, res: Response) => {
