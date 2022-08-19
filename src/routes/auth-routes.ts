@@ -14,12 +14,22 @@ authRouter.post('/registration',
     body('login').isLength({min: 3, max: 10}),
     body('password').isLength({min: 6, max: 20}),
     body('email').isEmail(),
-    userLoginValidation,
-    userEmailValidation,
+    // userLoginValidation,
+    // userEmailValidation,
     inputValidation,
     async (req: Request, res: Response) => {
     const {login, password, email} = req.body
     try {
+        const isUsedLogin = await userServices.getUserByLogin(login)
+        const isUsedEmail = await userServices.getUserByEmail(email)
+        if (isUsedLogin) {
+            res.status(400).json("Данный username уже кем-то занят!")
+            return
+        }
+        if (isUsedEmail) {
+            res.status(400).json("Данный email уже используется!")
+            return
+        }
         const createdUser = await authServices.registerUser(login, password, email)
         if (createdUser) {
             res.sendStatus(204).json("User is was created")
