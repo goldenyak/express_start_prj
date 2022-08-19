@@ -16,6 +16,7 @@ authRouter.post('/registration',
     body('email').isEmail(),
     userLoginValidation,
     userEmailValidation,
+    inputValidation,
     async (req: Request, res: Response) => {
     const {login, password, email} = req.body
     try {
@@ -49,7 +50,7 @@ authRouter.post('/login',
             }
 
             const token = await authServices.createToken(login);
-            res.status(200).json({token})
+            res.status(200).send({token})
             return;
 
         } catch (error) {
@@ -61,6 +62,7 @@ authRouter.post('/registration-confirmation',
     body('login').trim().exists().isLength({min: 3, max: 10}),
     body('email').isEmail(),
     body('password').trim().exists().isLength({min: 6, max: 20}),
+    inputValidation,
     async (req: Request, res: Response) => {
 
     const result = await authServices.confirmEmail(req.body.code)
