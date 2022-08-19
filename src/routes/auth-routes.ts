@@ -14,15 +14,15 @@ authRouter.post('/registration',
     body('login').isLength({min: 3, max: 10}),
     body('password').isLength({min: 6, max: 20}),
     body('email').isEmail(),
-    // userLoginValidation,
-    // userEmailValidation,
+    userLoginValidation,
+    userEmailValidation,
     inputValidation,
     async (req: Request, res: Response) => {
     const {login, password, email} = req.body
     try {
         const createdUser = await authServices.registerUser(login, password, email)
         if (createdUser) {
-            res.status(204).json("User is was created")
+            res.sendStatus(204).json("User is was created")
         }
 
     } catch (error) {
@@ -39,18 +39,18 @@ authRouter.post('/login',
             const {login, password} = req.body
             const findUser = await userServices.getUserByLogin(login)
             if (!findUser) {
-                res.status(401).json("Invalid name")
+                res.sendStatus(401).json("Invalid name")
                 return
             }
 
             const isPasswordCorrect = await authServices.checkPassword(password, findUser.accountData.password)
             if (!isPasswordCorrect) {
-                res.status(401).json("Invalid password")
+                res.sendStatus(401).json("Invalid password")
                 return
             }
 
             const token = await authServices.createToken(login);
-            res.status(200).send({token})
+            res.sendStatus(200).send({token})
             return;
 
         } catch (error) {
@@ -67,9 +67,9 @@ authRouter.post('/registration-confirmation',
 
     const result = await authServices.confirmEmail(req.body.code)
     if(result!) {
-        res.status(204)
+        res.sendStatus(204)
     } else {
-        res.status(400)
+        res.sendStatus(400)
     }
 });
 
