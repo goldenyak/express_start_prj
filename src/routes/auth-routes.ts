@@ -56,6 +56,7 @@ authRouter.post('/login',
     });
 
 authRouter.post('/registration-confirmation', async (req: Request, res: Response) => {
+    const {code} = req.query
 
 });
 
