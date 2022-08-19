@@ -14,8 +14,8 @@ authRouter.post('/registration',
     body('login').isLength({min: 3, max: 10}),
     body('password').isLength({min: 6, max: 20}),
     body('email').isEmail(),
-    userLoginValidation,
-    userEmailValidation,
+    // userLoginValidation,
+    // userEmailValidation,
     inputValidation,
     async (req: Request, res: Response) => {
     const {login, password, email} = req.body
