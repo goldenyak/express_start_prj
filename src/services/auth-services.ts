@@ -38,6 +38,17 @@ export const authServices = {
         return await usersCollection.findOne({"accountData.email": email})
     },
 
+    async confirmEmail(code: string) {
+        const user = await userServices.getUserByConfirmationCode(code)
+        if (!user) return false
+        if (user.emailConfirmation.isConfirmed) return false
+        if (user.emailConfirmation.confirmationCode !== code) return false
+        if (user.emailConfirmation.expirationDate < new Date()) return false
+
+        const result = await usersRepository.updateConfirmation(user._id)
+        return result
+    },
+
     async checkAuthToken(token: string) {
         try {
             const result: any = jwt.verify(token, "fhdgsmmbxssnxmsnxa")

@@ -59,6 +59,22 @@ export const userServices = {
         }
     },
 
+    async getUserByEmail(email: string) {
+        try {
+            return await usersRepository.getUserByEmail(email)
+        } catch (error) {
+            return null
+        }
+    },
+
+    async getUserByConfirmationCode(code: string) {
+        try {
+            return await usersRepository.getUserByConfirmationCode(code)
+        } catch (error) {
+            return null
+        }
+    },
+
     async deleteUserById(id: string) {
         return await usersRepository.deleteUserById(new ObjectId(id))
     },

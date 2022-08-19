@@ -11,7 +11,6 @@ import {contentValidation} from "../validation/posts/content-validation";
 import {inputValidation} from "../validation/errors/input-validation";
 import {postsServices} from "../services/posts-services";
 import {commentsServices} from "../services/comments-services";
-import {commentsRepository} from "../repositories/comments-repository";
 
 export const postsRouter = Router({})
 
@@ -73,7 +72,6 @@ postsRouter.put('/:id',
     async (req: Request, res: Response) => {
 
         const {title, shortDescription, content, bloggerId} = req.body
-        // const blogger = await bloggersRepository.getBloggerById(bloggerId)
         await postsServices.updatePostById(req.params.id, title, shortDescription, content, bloggerId)
         res.sendStatus(204)
         return
@@ -112,7 +110,6 @@ postsRouter.post('/:postId/comments',
     inputValidation,
     async (req: Request, res: Response) => {
         const {content} = req.body
-        // console.log(req.user)
         if (req.user) {
             res.status(201).send(await commentsServices.createComment(req.params.postId, content, req.user))
             return
