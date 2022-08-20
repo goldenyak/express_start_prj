@@ -71,6 +71,12 @@ authRouter.post('/login',
 
 authRouter.post('/registration-confirmation',
     isNotSpam('confirm', 10, 5),
+    body('code').custom(async value => {
+        const user = await usersRepository.getUserByConfirmationCode(value)
+        if (!user || user.emailConfirmation.isConfirmed) {
+            return Promise.reject();
+        }
+    }),
     async (req: Request, res: Response) => {
 
         const result = await authServices.confirmEmail(req.body.code)
