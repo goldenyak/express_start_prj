@@ -14,8 +14,16 @@ authRouter.post('/registration',
     body('login').isLength({min: 3, max: 10}),
     body('password').isLength({min: 6, max: 20}),
     body('email').isEmail(),
-    userLoginValidation,
-    userEmailValidation,
+    body('email').custom(async value => {
+        if (await userServices.getUserByEmail(value)) {
+            return Promise.reject();
+        }
+    }),
+    body('login').custom(async value => {
+        if (await userServices.getUserByLogin(value)) {
+            return Promise.reject();
+        }
+    }),
     inputValidation,
     async (req: Request, res: Response) => {
     const {login, password, email} = req.body
