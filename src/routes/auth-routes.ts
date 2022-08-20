@@ -50,20 +50,18 @@ authRouter.post('/login',
             const {login, password} = req.body
             const findUser = await userServices.getUserByLogin(login)
             if (!findUser) {
-                res.sendStatus(401).json("Invalid name")
+                res.status(401).json("Invalid name")
                 return
             }
-
             const isPasswordCorrect = await authServices.checkPassword(password, findUser.accountData.password)
             if (!isPasswordCorrect) {
-                res.sendStatus(401).json("Invalid password")
+                res.status(401).json("Invalid password")
                 return
             }
 
             const token = await authServices.createToken(login);
-            res.sendStatus(200).send({token})
-            return;
-
+            res.status(200).json({token})
+            return
         } catch (error) {
             console.error(error)
         }
