@@ -4,6 +4,7 @@ import {ObjectId} from "mongodb";
 import {v4 as uuidv4} from "uuid";
 import add from "date-fns/add";
 import {authServices} from "./auth-services";
+import {requestLog} from "../db/ip-adapter";
 
 export const userServices = {
     async getAllUsers(pageNumber: number, pageSize: number) {
@@ -78,4 +79,19 @@ export const userServices = {
     async deleteUserById(id: string) {
         return await usersRepository.deleteUserById(new ObjectId(id))
     },
+
+    logRequest: (action:string, ip:string, time: Date) => {
+        const newLog = {
+            action: action,
+            ip: ip,
+            time: time
+        }
+        requestLog.push(newLog)
+    },
+
+    getRequests: (action:string, ip:string, time:Date) => {
+        return requestLog.filter(request =>
+            request.action === action && request.ip === ip && request.time > time
+        )
+    }
 }

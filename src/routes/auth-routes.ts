@@ -6,11 +6,13 @@ import {body} from "express-validator";
 import {usersRepository} from "../repositories/users-repository";
 import {userLoginValidation} from "../validation/users/user-login-validation";
 import {userEmailValidation} from "../validation/users/user-email-validation";
+import {isNotSpam} from "../middlewares/auth-middleware";
 
 
 export const authRouter = Router({});
 
 authRouter.post('/registration',
+    isNotSpam('register', 10, 5),
     body('login').isLength({min: 3, max: 10}),
     body('password').isLength({min: 6, max: 20}),
     body('email').isEmail(),
@@ -49,6 +51,7 @@ authRouter.post('/registration',
 });
 
 authRouter.post('/login',
+    isNotSpam('login', 10, 5),
     body('login').trim().exists().isLength({min: 3, max: 10}),
     body('password').trim().exists().isLength({min: 6, max: 20}),
     inputValidation,
@@ -77,6 +80,7 @@ authRouter.post('/login',
     });
 
 authRouter.post('/registration-confirmation',
+    isNotSpam('confirm', 10, 5),
     body('login').trim().exists().isLength({min: 3, max: 10}),
     body('email').isEmail(),
     body('password').trim().exists().isLength({min: 6, max: 20}),

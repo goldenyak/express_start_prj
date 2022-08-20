@@ -1,6 +1,7 @@
 import {NextFunction, Request, Response} from "express";
 import {authServices} from "../services/auth-services";
 import {userServices} from "../services/user-services";
+import sub from "date-fns/sub"
 
 export const authMiddleware = async (req: Request, res: Response, next: NextFunction) => {
     if (!req.headers.authorization) {
@@ -33,16 +34,20 @@ export const authMiddleware = async (req: Request, res: Response, next: NextFunc
             return
         }
     }
-
     res.sendStatus(401)
     return
+}
 
-
-    if (req.headers["content-type"] === "application/json") {
-        next()
-    } else {
-        res.status(400).send("Bad content type")
-        res.end()
-        return;
+export const isNotSpam = (action:string, time: number = 10, limit: number = 5) => {
+    return (req: Request, res: Response, next: NextFunction) => {
+        const logs = userServices.getRequests(action, req.ip, sub(new Date(), {seconds: time}))
+        if(!logs || logs.length<limit) {
+            userServices.logRequest(action, req.ip, new Date())
+            next()
+            return
+        } else {
+            res.sendStatus(429)
+            return
+        }
     }
 }
