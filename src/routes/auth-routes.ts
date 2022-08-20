@@ -22,14 +22,14 @@ authRouter.post('/registration',
     try {
         const isUsedLogin = await userServices.getUserByLogin(login)
         const isUsedEmail = await userServices.getUserByEmail(email)
-        if (isUsedLogin) {
-            res.status(400).json("Данный username уже кем-то занят!")
-            return
-        }
-        if (isUsedEmail) {
-            res.status(400).json("Данный email уже используется!")
-            return
-        }
+        // if (isUsedLogin) {
+        //     res.status(400).json("Данный username уже кем-то занят!")
+        //     return
+        // }
+        // if (isUsedEmail) {
+        //     res.status(400).json("Данный email уже используется!")
+        //     return
+        // }
         const createdUser = await authServices.registerUser(login, password, email)
         if (createdUser) {
             res.sendStatus(204).json("User is was created")
