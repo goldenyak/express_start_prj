@@ -14,6 +14,10 @@ import {testingRouter} from "./routes/testing-routes";
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({
+    extended: true
+}));
+app.set('trust proxy', true)
 
 app.use('/auth', authRouter);
 app.use('/users', userRouter);

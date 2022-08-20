@@ -15,7 +15,7 @@ authRouter.post('/registration',
     isNotSpam('register', 10, 5),
     body('login').isLength({min: 3, max: 10}),
     body('password').isLength({min: 6, max: 20}),
-    body('email').isEmail(),
+    body('email').normalizeEmail().isEmail(),
     body('email').custom(async value => {
         if (await userServices.getUserByEmail(value)) {
             return Promise.reject();
@@ -28,32 +28,22 @@ authRouter.post('/registration',
     }),
     inputValidation,
     async (req: Request, res: Response) => {
-    const {login, password, email} = req.body
-    try {
-        const isUsedLogin = await userServices.getUserByLogin(login)
-        const isUsedEmail = await userServices.getUserByEmail(email)
-        // if (isUsedLogin) {
-        //     res.status(400).json("Данный username уже кем-то занят!")
-        //     return
-        // }
-        // if (isUsedEmail) {
-        //     res.status(400).json("Данный email уже используется!")
-        //     return
-        // }
-        const createdUser = await authServices.registerUser(login, password, email)
-        if (createdUser) {
-            res.sendStatus(204).json("User is was created")
-        }
+        const {login, password, email} = req.body
+        try {
+            const createdUser = await authServices.registerUser(login, password, email)
+            if (createdUser) {
+                res.sendStatus(204).json("User is was created")
+            }
 
-    } catch (error) {
-        res.sendStatus(400)
-    }
-});
+        } catch (error) {
+            res.sendStatus(400)
+        }
+    });
 
 authRouter.post('/login',
     isNotSpam('login', 10, 5),
-    body('login').trim().exists().isLength({min: 3, max: 10}),
-    body('password').trim().exists().isLength({min: 6, max: 20}),
+    body('login').exists().isString(),
+    body('password').exists().isString(),
     inputValidation,
     async (req: Request, res: Response) => {
         try {
@@ -81,20 +71,27 @@ authRouter.post('/login',
 
 authRouter.post('/registration-confirmation',
     isNotSpam('confirm', 10, 5),
-    body('login').trim().exists().isLength({min: 3, max: 10}),
-    body('email').isEmail(),
-    body('password').trim().exists().isLength({min: 6, max: 20}),
-    inputValidation,
     async (req: Request, res: Response) => {
 
-    const result = await authServices.confirmEmail(req.body.code)
-    if(result!) {
+        const result = await authServices.confirmEmail(req.body.code)
+        if (result!) {
+            res.sendStatus(204)
+        } else {
+            res.sendStatus(400)
+        }
+    });
+
+authRouter.post('/registration-email-resending',
+    isNotSpam('resend', 10, 5),
+    body('email').normalizeEmail().isEmail(),
+    body('email').custom(async value => {
+        const user = await userServices.getUserByEmail(value)
+        if (user === null || (user && user.emailConfirmation.isConfirmed)) {
+            return Promise.reject();
+        }
+    }),
+    inputValidation,
+    async (req: Request, res: Response) => {
+        await authServices.updateConfirmationCode(req.body.email)
         res.sendStatus(204)
-    } else {
-        res.sendStatus(400)
-    }
-});
-
-authRouter.post('/registration-email-resending', async (req: Request, res: Response) => {
-
-});
+    });

@@ -34,10 +34,6 @@ export const authServices = {
         return await bcrypt.hash(password, 10)
     },
 
-    async checkEmail(email: string) {
-        return await usersCollection.findOne({"accountData.email": email})
-    },
-
     async confirmEmail(code: string) {
         const user = await userServices.getUserByConfirmationCode(code)
         if (!user) return false
@@ -65,4 +61,14 @@ export const authServices = {
             return token
         }
     },
+
+    updateConfirmationCode: async (email: string) => {
+        const code = await userServices.updateUserConfirmationCode(email)
+        try {
+            return await emailAdapter.sendEmail(email, `https://express-start-prj.herokuapp.com/auth/registration-confirmation?code=${code}`)
+        }
+        catch (e) {
+            throw e
+        }
+    }
 }

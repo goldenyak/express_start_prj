@@ -51,6 +51,10 @@ export const usersRepository = {
         return result.modifiedCount === 1
     },
 
+    updateConfirmationCode: async (email: string, code: string) => {
+        return await usersCollection.updateOne({"accountData.email": email}, {$set: {"emailConfirmation.confirmationCode": code}})
+    },
+
     async countUsers(filter: Object) {
         return await usersCollection.countDocuments(filter)
     }

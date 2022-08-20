@@ -80,6 +80,12 @@ export const userServices = {
         return await usersRepository.deleteUserById(new ObjectId(id))
     },
 
+    updateUserConfirmationCode: async (email:string) => {
+        const code = uuidv4().toString()
+        await usersRepository.updateConfirmationCode(email, code)
+        return code
+    },
+
     logRequest: (action:string, ip:string, time: Date) => {
         const newLog = {
             action: action,
