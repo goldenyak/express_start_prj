@@ -5,7 +5,7 @@ export const userEmailValidation = async (req: Request, res: Response, next:Next
     const userEmail = req.body.email
 
     if(await userServices.getUserByEmail(userEmail)) {
-        res.status(400).json("Данный email уже используется!")
+        res.sendStatus(400)
         return
     } else {
         next()

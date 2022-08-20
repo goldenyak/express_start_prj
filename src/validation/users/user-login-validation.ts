@@ -5,7 +5,7 @@ export const userLoginValidation = async (req: Request, res: Response, next:Next
     const userLogin = req.body.login
 
     if(await userServices.getUserByLogin(userLogin)) {
-        res.status(400).json("Данный username уже кем-то занят!")
+        res.sendStatus(400)
         return
     } else {
         next()

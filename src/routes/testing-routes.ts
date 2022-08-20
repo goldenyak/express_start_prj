@@ -7,9 +7,9 @@ import {
 } from "../db/db";
 
 
-export const testing = Router({})
+export const testingRouter = Router({})
 
-testing.delete('/all-data', async (req: Request, res: Response) => {
+testingRouter.delete('/all-data', async (req: Request, res: Response) => {
     await bloggersCollection.deleteMany({})
     await postsCollection.deleteMany({})
     await usersCollection.deleteMany({})
