@@ -86,7 +86,7 @@ export const userServices = {
         return code
     },
 
-    logRequest: (action:string, ip:string, time: Date) => {
+    logRequest: (action: string, ip: string, time: Date) => {
         const newLog = {
             action: action,
             ip: ip,
