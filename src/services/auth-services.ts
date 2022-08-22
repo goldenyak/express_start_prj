@@ -33,15 +33,15 @@ export const authServices = {
         return await bcrypt.hash(password, 10)
     },
 
-    async confirmEmail(code: string) {
-        const user = await userServices.getUserByConfirmationCode(code)
-        if (!user) return false
-        if (user.emailConfirmation.isConfirmed) return false
-        if (user.emailConfirmation.confirmationCode !== code) return false
-        if (user.emailConfirmation.expirationDate < new Date()) return false
-
-        return await usersRepository.updateConfirmation(user._id)
-    },
+    // async confirmEmail(code: string) {
+    //     const user = await userServices.getUserByConfirmationCode(code)
+    //     if (!user) return false
+    //     if (user.emailConfirmation.isConfirmed) return false
+    //     if (user.emailConfirmation.confirmationCode !== code) return false
+    //     if (user.emailConfirmation.expirationDate < new Date()) return false
+    //
+    //     return await usersRepository.updateConfirmation(user._id)
+    // },
 
     async checkAuthToken(token: string) {
         try {
@@ -63,8 +63,7 @@ export const authServices = {
     async updateConfirmationCode(email: string) {
         const code = await userServices.updateUserConfirmationCode(email)
         try {
-            // return await emailAdapter.sendEmail(email, `https://express-start-prj.herokuapp.com/auth/registration-confirmation?code=${code}`)
-            return await emailAdapter.sendEmail(email, `${code}`)
+            return await emailAdapter.sendEmail(email, `https://express-start-prj.herokuapp.com/auth/registration-confirmation?code=${code}`)
         }
         catch (e) {
             throw e
