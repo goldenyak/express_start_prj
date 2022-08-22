@@ -2,7 +2,7 @@ import {emailRepository} from "../repositories/email-repository";
 
 export const emailAdapter = {
 
-    async sendEmail(email: string, code: string) {
+    async sendEmail(email: string | undefined, code: string) {
         return await emailRepository.sendEmail(email, code)
     }
 }
