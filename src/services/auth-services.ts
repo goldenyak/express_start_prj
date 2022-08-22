@@ -2,7 +2,6 @@ import jwt from "jsonwebtoken";
 import {usersRepository} from "../repositories/users-repository";
 import {userServices} from "./user-services";
 import bcrypt from "bcrypt";
-import {usersCollection} from "../db/db";
 import {emailAdapter} from "../adapters/emailAdapter";
 
 
@@ -41,8 +40,7 @@ export const authServices = {
         if (user.emailConfirmation.confirmationCode !== code) return false
         if (user.emailConfirmation.expirationDate < new Date()) return false
 
-        const result = await usersRepository.updateConfirmation(user._id)
-        return result
+        return await usersRepository.updateConfirmation(user._id)
     },
 
     async checkAuthToken(token: string) {

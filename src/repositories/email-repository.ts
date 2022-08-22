@@ -10,7 +10,8 @@ export const emailRepository = {
         //                                    <a href='https://express-start-prj.herokuapp.com/auth/registration-confirmation?code=${code}'>Подтвердить регистрацию</a>
         //                             </div>`
 
-        const message = `https://express-start-prj.herokuapp.com/auth/registration-confirmation?code=${code}`
+        // const message = `https://express-start-prj.herokuapp.com/auth/registration-confirmation?code=${code}`
+        const message = `<a>${code}</a>`
         const transporter = nodemailer.createTransport({
             service: "gmail",
             auth: {
