@@ -108,8 +108,12 @@ authRouter.post('/registration-email-resending',
             return Promise.reject();
         }
     }),
-    inputValidation,
-    async (req: Request, res: Response) => {
+        async (req: Request, res: Response) => {
+            const errors = validationResult(req)
+            if (!errors.isEmpty()) {
+                res.status(400).json({"errorsMessages": errorsAdapt(errors.array({onlyFirstError: true}))})
+                return
+            }
         await authServices.updateConfirmationCode(req.body.email)
         res.sendStatus(204)
     });
