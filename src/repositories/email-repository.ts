@@ -4,12 +4,13 @@ export const emailRepository = {
     async sendEmail(email: string | undefined, code: string) {
 
         const subject = "Confirmation of registration"
-        const message = `<h1>Подтвердите регистрацию</h1> 
-                                    <div> 
-                                           <h3>Чтобы завершить регистрацию, перейдите по ссылке ниже</h3>
-                                           <a href='https://express-start-prj.herokuapp.com/auth/registration-confirmation?code=${code}'>Подтвердить регистрацию</a> 
-                                    </div>`
+        // const message = `<h1>Подтвердите регистрацию</h1>
+        //                             <div>
+        //                                    <h3>Чтобы завершить регистрацию, перейдите по ссылке ниже</h3>
+        //                                    <a href='https://express-start-prj.herokuapp.com/auth/registration-confirmation?code=${code}'>Подтвердить регистрацию</a>
+        //                             </div>`
 
+        const message = `https://express-start-prj.herokuapp.com/auth/registration-confirmation?code=${code}`
         const transporter = nodemailer.createTransport({
             service: "gmail",
             auth: {
