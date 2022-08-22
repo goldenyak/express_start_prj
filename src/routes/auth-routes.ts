@@ -90,7 +90,7 @@ authRouter.post('/registration-confirmation',
             res.status(400).json({"errorsMessages": errorsAdapt(errors.array({onlyFirstError: true}))})
             return
         }
-        await authServices.confirmEmail(req.body.code)
+        await usersRepository.confirmUser(req.body.code)
         res.sendStatus(204)
     });
 

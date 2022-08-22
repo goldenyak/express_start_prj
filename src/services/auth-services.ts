@@ -63,7 +63,8 @@ export const authServices = {
     async updateConfirmationCode(email: string) {
         const code = await userServices.updateUserConfirmationCode(email)
         try {
-            return await emailAdapter.sendEmail(email, `https://express-start-prj.herokuapp.com/auth/registration-confirmation?code=${code}`)
+            // return await emailAdapter.sendEmail(email, `https://express-start-prj.herokuapp.com/auth/registration-confirmation?code=${code}`)
+            return await emailAdapter.sendEmail(email, `${code}`)
         }
         catch (e) {
             throw e
