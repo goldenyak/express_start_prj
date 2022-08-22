@@ -4,7 +4,7 @@ import {ObjectId} from "mongodb";
 import {v4 as uuidv4} from "uuid";
 import add from "date-fns/add";
 import {authServices} from "./auth-services";
-import {requestLog} from "../db/ip-adapter";
+import {requestBundler} from "../db/ip-adapter";
 
 export const userServices = {
     async getAllUsers(pageNumber: number, pageSize: number) {
@@ -82,18 +82,18 @@ export const userServices = {
         return code
     },
 
-    logRequest: (action: string, ip: string, time: Date) => {
+    logRequest: (requestName: string, ip: string, time: Date) => {
         const newLog = {
-            action: action,
+            requestName: requestName,
             ip: ip,
             time: time
         }
-        requestLog.push(newLog)
+        requestBundler.push(newLog)
     },
 
-    getRequests: (action:string, ip:string, time:Date) => {
-        return requestLog.filter(request =>
-            request.action === action && request.ip === ip && request.time > time
+    getRequests: (requestName: string, ip: string, time: Date) => {
+        return requestBundler.filter(request =>
+            request.requestName === requestName && request.ip === ip && request.time > time
         )
     }
 }

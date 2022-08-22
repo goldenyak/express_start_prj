@@ -2,11 +2,12 @@ import {Request, Response, Router} from "express";
 import {userServices} from "../services/user-services";
 import {inputValidation} from "../validation/errors/input-validation";
 import {authServices} from "../services/auth-services";
-import {body} from "express-validator";
+import {body, validationResult} from "express-validator";
 import {usersRepository} from "../repositories/users-repository";
 import {userLoginValidation} from "../validation/users/user-login-validation";
 import {userEmailValidation} from "../validation/users/user-email-validation";
 import {isNotSpam} from "../middlewares/auth-middleware";
+import {errorsAdapt} from "../utils";
 
 
 export const authRouter = Router({});
@@ -26,9 +27,13 @@ authRouter.post('/registration',
             return Promise.reject();
         }
     }),
-    inputValidation,
     async (req: Request, res: Response) => {
         const {login, password, email} = req.body
+        const errors = validationResult(req)
+        if (!errors.isEmpty()) {
+            res.status(400).json({"errorsMessages": errorsAdapt(errors.array({onlyFirstError: true}))})
+            return
+        }
         const createdUser = await authServices.registerUser(login, password, email)
         if (createdUser) {
             res.sendStatus(204)
@@ -42,8 +47,13 @@ authRouter.post('/login',
     isNotSpam('login', 10, 5),
     body('login').exists().isString(),
     body('password').exists().isString(),
-    inputValidation,
     async (req: Request, res: Response) => {
+        const errors = validationResult(req)
+        if (!errors.isEmpty()) {
+            res.status(400).json({"errorsMessages": errorsAdapt(errors.array({onlyFirstError: true}))})
+            return
+        }
+
         try {
             const {login, password} = req.body
             const findUser = await userServices.getUserByLogin(login)

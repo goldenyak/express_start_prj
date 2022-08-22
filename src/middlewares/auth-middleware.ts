@@ -38,11 +38,11 @@ export const authMiddleware = async (req: Request, res: Response, next: NextFunc
     return
 }
 
-export const isNotSpam = (action: string, time: number = 10, limit: number = 5) => {
+export const isNotSpam = (requestName: string, time: number = 10, limit: number = 5) => {
     return (req: Request, res: Response, next: NextFunction) => {
-        const logs = userServices.getRequests(action, req.ip, sub(new Date(), {seconds: time}))
+        const logs = userServices.getRequests(requestName, req.ip, sub(new Date(), {seconds: time}))
         if(!logs || logs.length < limit) {
-            userServices.logRequest(action, req.ip, new Date())
+            userServices.logRequest(requestName, req.ip, new Date())
             next()
             return
         } else {

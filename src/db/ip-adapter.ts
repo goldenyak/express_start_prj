@@ -1,5 +1,5 @@
-export const requestLog = [{
-    action: '',
+export const requestBundler = [{
+    requestName: '',
     ip: '',
     time: new Date()
 }]
