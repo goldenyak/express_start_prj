@@ -22,7 +22,7 @@ export const emailRepository = {
             from: '"Egor Yakovlev 👻" <yakovlevnode@gmail.com>',
             to: email,
             subject: subject,
-            html: message,
+            text: message,
         });
         return (info.response).split(' ')[0]
     }

@@ -1,6 +1,7 @@
 import express, {Request, Response} from "express";
 import cors from 'cors';
 import bodyParser from "body-parser";
+import cookieParser from "cookie-parser";
 import {bloggersRouter} from "./routes/bloggers-routes";
 import {postsRouter} from "./routes/posts-routes";
 import {runDb} from "./db/db";
@@ -17,6 +18,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
     extended: true
 }));
+app.use(cookieParser());
 app.set('trust proxy', true)
 
 app.use('/auth', authRouter);

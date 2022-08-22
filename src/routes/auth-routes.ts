@@ -29,16 +29,14 @@ authRouter.post('/registration',
     inputValidation,
     async (req: Request, res: Response) => {
         const {login, password, email} = req.body
-        try {
-            const createdUser = await authServices.registerUser(login, password, email)
-            if (createdUser) {
-                res.sendStatus(204).json("User is was created")
-            }
-
-        } catch (error) {
+        const createdUser = await authServices.registerUser(login, password, email)
+        if (createdUser) {
+            res.sendStatus(204)
+        } else {
             res.sendStatus(400)
         }
-    });
+    }
+);
 
 authRouter.post('/login',
     isNotSpam('login', 10, 5),

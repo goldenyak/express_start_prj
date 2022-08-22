@@ -61,11 +61,7 @@ export const userServices = {
     },
 
     async getUserByEmail(email: string) {
-        try {
             return await usersRepository.getUserByEmail(email)
-        } catch (error) {
-            return null
-        }
     },
 
     async getUserByConfirmationCode(code: string) {

@@ -15,4 +15,5 @@ testingRouter.delete('/all-data', async (req: Request, res: Response) => {
     await usersCollection.deleteMany({})
     await commentsCollection.deleteMany({})
     res.sendStatus(204)
+    return
 })
