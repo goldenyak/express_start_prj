@@ -85,6 +85,12 @@ authRouter.post('/registration-confirmation',
     }),
     async (req: Request, res: Response) => {
 
+        const errors = validationResult(req)
+        if (!errors.isEmpty()) {
+            res.status(400).json({"errorsMessages": errorsAdapt(errors.array({onlyFirstError: true}))})
+            return
+        }
+
         const result = await authServices.confirmEmail(req.body.code)
         if (result!) {
             res.sendStatus(204)
