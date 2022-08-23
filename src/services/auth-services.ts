@@ -12,7 +12,10 @@ export const authServices = {
             const createdUser = await userServices.createNewUser(login, password, email)
             if (createdUser) {
                 const newUser = await userServices.getUserByLogin(createdUser.login)
-                const confirmEmail = await emailAdapter.sendEmail(newUser?.accountData.email, `${newUser?.emailConfirmation.confirmationCode}`)
+                const confirmEmail = await emailAdapter.sendEmail(
+                    newUser?.accountData.email,
+                    `https://express-start-prj.herokuapp.com/auth/registration-confirmation?code=${newUser?.emailConfirmation.confirmationCode}`
+                )
                 if (confirmEmail === "250") {
                     return true
                 } else {
@@ -64,8 +67,7 @@ export const authServices = {
         const code = await userServices.updateUserConfirmationCode(email)
         try {
             return await emailAdapter.sendEmail(email, `https://express-start-prj.herokuapp.com/auth/registration-confirmation?code=${code}`)
-        }
-        catch (e) {
+        } catch (e) {
             throw e
         }
     }
