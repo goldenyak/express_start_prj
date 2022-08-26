@@ -26,10 +26,7 @@ export const authMiddleware = async (req: Request, res: Response, next: NextFunc
     if (authType === 'Bearer') {
         const userId = await authServices.checkAuthToken(authPhrase)
         if (userId) {
-            console.log(userId)
-            console.log("JWT auth", userId)
             req.user = await userServices.getUserById(userId)
-            console.log(req.user)
             next()
             return
         }

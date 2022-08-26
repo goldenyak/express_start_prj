@@ -3,6 +3,10 @@ import {usersRepository} from "../repositories/users-repository";
 import {userServices} from "./user-services";
 import bcrypt from "bcrypt";
 import {emailAdapter} from "../adapters/emailAdapter";
+import {ObjectId} from "mongodb";
+import add from "date-fns/add";
+import {tokensRepository} from "../repositories/tokens-repository";
+import {RefreshTokensType} from "../types/refresh-tokens-type";
 
 
 export const authServices = {
@@ -36,19 +40,18 @@ export const authServices = {
         return await bcrypt.hash(password, 10)
     },
 
-    // async confirmEmail(code: string) {
-    //     const user = await userServices.getUserByConfirmationCode(code)
-    //     if (!user) return false
-    //     if (user.emailConfirmation.isConfirmed) return false
-    //     if (user.emailConfirmation.confirmationCode !== code) return false
-    //     if (user.emailConfirmation.expirationDate < new Date()) return false
-    //
-    //     return await usersRepository.updateConfirmation(user._id)
-    // },
-
     async checkAuthToken(token: string) {
         try {
             const result: any = jwt.verify(token, "fhdgsmmbxssnxmsnxa")
+            return result.userId
+        } catch (error) {
+            return null
+        }
+    },
+
+    async checkRefreshToken(refreshToken: string) {
+        try {
+            const result: any = jwt.verify(refreshToken, "hgghdgfhd")
             return result.userId
         } catch (error) {
             return null
@@ -61,6 +64,30 @@ export const authServices = {
             const token = jwt.sign({userId: findUser._id}, "fhdgsmmbxssnxmsnxa", {expiresIn: "1h"})
             return token
         }
+    },
+
+    async createRefreshToken(login: string) {
+        const findUser = await usersRepository.getUserByLogin(login)
+        if (findUser) {
+            const refreshToken = jwt.sign({userId: findUser._id}, "hgghdgfhd", {expiresIn: "1h"})
+
+            const newRefreshToken: RefreshTokensType = {
+                _id: new ObjectId(),
+                token: refreshToken,
+                isValid: true,
+                expiresIn: add(new Date(), {
+                    seconds: 200000
+                }),
+                user: findUser._id.toString()
+            }
+
+            await tokensRepository.addNewRefreshToken(newRefreshToken)
+            return refreshToken
+        }
+    },
+
+    async deactivateToken(refreshToken: string) {
+        await tokensRepository.deactivateToken(refreshToken)
     },
 
     async updateConfirmationCode(email: string) {

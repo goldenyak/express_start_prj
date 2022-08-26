@@ -6,8 +6,9 @@ import {body, validationResult} from "express-validator";
 import {usersRepository} from "../repositories/users-repository";
 import {userLoginValidation} from "../validation/users/user-login-validation";
 import {userEmailValidation} from "../validation/users/user-email-validation";
-import {isNotSpam} from "../middlewares/auth-middleware";
+import {authMiddleware, isNotSpam} from "../middlewares/auth-middleware";
 import {errorsAdapt} from "../utils";
+import {checkRefreshToken} from "../middlewares/check-refresh-token";
 
 
 export const authRouter = Router({});
@@ -17,23 +18,24 @@ authRouter.post('/registration',
     body('login').isLength({min: 3, max: 10}),
     body('password').isLength({min: 6, max: 20}),
     body('email').normalizeEmail().isEmail(),
-    body('email').custom(async value => {
-        if (await userServices.getUserByEmail(value)) {
-            return Promise.reject();
-        }
-    }),
-    body('login').custom(async value => {
-        if (await userServices.getUserByLogin(value)) {
-            return Promise.reject();
-        }
-    }),
+    // body('email').custom(async value => {
+    //     if (await userServices.getUserByEmail(value)) {
+    //         return Promise.reject();
+    //     }
+    // }),
+    // body('login').custom(async value => {
+    //     if (await userServices.getUserByLogin(value)) {
+    //         return Promise.reject();
+    //     }
+    // }),
+    inputValidation,
     async (req: Request, res: Response) => {
         const {login, password, email} = req.body
-        const errors = validationResult(req)
-        if (!errors.isEmpty()) {
-            res.status(400).json({"errorsMessages": errorsAdapt(errors.array({onlyFirstError: true}))})
-            return
-        }
+        // const errors = validationResult(req)
+        // if (!errors.isEmpty()) {
+        //     res.status(400).json({"errorsMessages": errorsAdapt(errors.array({onlyFirstError: true}))})
+        //     return
+        // }
         const createdUser = await authServices.registerUser(login, password, email)
         if (createdUser) {
             res.sendStatus(204)
@@ -68,12 +70,49 @@ authRouter.post('/login',
             }
 
             const token = await authServices.createToken(login);
-            res.status(200).json({token})
+            const refreshToken = await authServices.createRefreshToken(login)
+            res.cookie("refreshToken", refreshToken)
+            res.status(200).json({"accessToken": token})
             return
         } catch (error) {
             console.error(error)
         }
     });
+
+authRouter.post('/refresh-token',
+    checkRefreshToken,
+    async (req: Request, res: Response) => {
+        const userName = req.user!.accountData.userName
+        const refreshToken = await authServices.createRefreshToken(userName)
+        res.cookie('refreshToken', refreshToken,
+            {
+                maxAge: 20000,
+                httpOnly: true,
+                secure: true
+            }
+        )
+        res.status(200).json({"accessToken": await authServices.createToken(userName)})
+    });
+
+authRouter.post('/logout',
+    checkRefreshToken,
+    async (req: Request, res: Response) => {
+        await authServices.deactivateToken(req.cookies.refreshToken)
+        const user = req.user
+        res.sendStatus(204)
+        return
+    })
+
+authRouter.get('/me',
+    authMiddleware,
+    (req: Request, res: Response) => {
+        const user = req.user
+        res.status(200).json({
+            "email": user?.accountData.email,
+            "login": user?.accountData.userName,
+            "userId": user?._id
+        })
+    })
 
 authRouter.post('/registration-confirmation',
     isNotSpam('confirm', 10, 5),

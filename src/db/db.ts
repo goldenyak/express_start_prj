@@ -12,6 +12,7 @@ export const bloggersCollection = client.db("express-project").collection<blogge
 export const postsCollection = client.db("express-project").collection<postsType>("posts");
 export const usersCollection = client.db("express-project").collection<userType>("users");
 export const commentsCollection = client.db("express-project").collection<commentsType>("comments");
+export const refreshTokensCollection = client.db("express-project").collection<any>("refreshTokens");
 
 export async function runDb() {
     try {
