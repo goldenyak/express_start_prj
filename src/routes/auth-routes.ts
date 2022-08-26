@@ -98,7 +98,6 @@ authRouter.post('/logout',
     checkRefreshToken,
     async (req: Request, res: Response) => {
         await authServices.deactivateToken(req.cookies.refreshToken)
-        const user = req.user
         res.sendStatus(204)
         return
     })
