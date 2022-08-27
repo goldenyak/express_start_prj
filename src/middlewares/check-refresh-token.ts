@@ -8,7 +8,7 @@ export const checkRefreshToken = async (req: Request, res: Response, next: NextF
     if (userId) {
         req.user = await userServices.getUserById(userId)
         next()
-        return userId
+        return
     }
     res.sendStatus(401)
     return
