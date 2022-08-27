@@ -81,7 +81,7 @@ authRouter.post('/login',
             res.status(200).json({"accessToken": token})
             return
         } catch (error) {
-            console.error(error)
+            res.sendStatus(401)
         }
     });
 
@@ -97,7 +97,8 @@ authRouter.post('/refresh-token',
                 secure: true
             }
         )
-        res.status(200).json({"accessToken": await authServices.createToken(userName)})
+        .status(200).json({"accessToken": await authServices.createToken(userName)})
+        return
     });
 
 authRouter.post('/logout',
