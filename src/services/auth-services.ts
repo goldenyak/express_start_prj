@@ -85,6 +85,8 @@ export const authServices = {
 
             await tokensRepository.addNewRefreshToken(newRefreshToken)
             return refreshToken
+        } else {
+            return null
         }
     },
 
