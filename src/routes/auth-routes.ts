@@ -71,7 +71,13 @@ authRouter.post('/login',
 
             const token = await authServices.createToken(login);
             const refreshToken = await authServices.createRefreshToken(login)
-            res.cookie("refreshToken", refreshToken)
+            res.cookie('refreshToken', refreshToken,
+                {
+                    maxAge: 20000,
+                    httpOnly: true,
+                    secure: true
+                }
+            )
             res.status(200).json({"accessToken": token})
             return
         } catch (error) {
