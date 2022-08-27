@@ -78,11 +78,12 @@ authRouter.post('/login',
                     secure: true
                 }
             )
-            res.status(200).json({"accessToken": token})
+            .status(200).json({"accessToken": token})
             return
         } catch (error) {
-            res.sendStatus(401)
+            console.log(error)
         }
+        res.sendStatus(401)
     });
 
 authRouter.post('/refresh-token',
