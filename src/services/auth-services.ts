@@ -52,7 +52,7 @@ export const authServices = {
     async checkRefreshToken(refreshToken: string) {
         const result: any = jwt.verify(refreshToken, "hgghdgfhd")
         const currentToken = await tokensRepository.getToken(refreshToken)
-        if (currentToken.expiresIn > new Date()) {
+        if (result.userId && currentToken && currentToken.isValid && currentToken.expiresIn > new Date()) {
             await tokensRepository.deactivateToken(refreshToken)
             return result.userId
         } else {

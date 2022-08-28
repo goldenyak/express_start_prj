@@ -71,15 +71,19 @@ authRouter.post('/login',
 
             const token = await authServices.createToken(login);
             const refreshToken = await authServices.createRefreshToken(login)
-            res.cookie('refreshToken', refreshToken,
+            return res.cookie('refreshToken', refreshToken,
                 {
-                    maxAge: 20000,
+                    maxAge: 20,
                     httpOnly: true,
                     secure: true
                 }
             )
-            res.status(200).json({"accessToken": token})
-            return
+                .status(200).json({
+                    "accessToken": token,
+                    // "createdRefreshToken": refreshToken,
+                    // "refreshTokenInCookies": `is ${req.cookies.refreshToken},`
+                })
+
         } catch (error) {
             console.error(error)
         }
@@ -88,16 +92,17 @@ authRouter.post('/login',
 authRouter.post('/refresh-token',
     checkRefreshToken,
     async (req: Request, res: Response) => {
+        console.log(req.user)
         const userName = req.user!.accountData.userName
         const refreshToken = await authServices.createRefreshToken(userName)
         res.cookie('refreshToken', refreshToken,
             {
-                maxAge: 20000,
+                maxAge: 200000,
                 httpOnly: true,
                 secure: true
             }
         )
-        .status(200).json({"accessToken": await authServices.createToken(userName)})
+            .status(200).json({"accessToken": await authServices.createToken(userName)})
         return
     });
 

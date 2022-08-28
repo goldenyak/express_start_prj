@@ -5,7 +5,7 @@ import {bloggersType} from "../types/bloggers-type";
 import {userType} from "../types/user-type";
 import {commentsType} from "../types/comments-type";
 
-const mongoUri = process.env.MONGO_URI || "mongodb://0.0.0.0:27017";
+const mongoUri = process.env.MONGO_URI || "mongodb://0.0.0.0:27017" || "http://localhost:5000/";
 export const client = new MongoClient(mongoUri);
 
 export const bloggersCollection = client.db("express-project").collection<bloggersType>("bloggers");

@@ -13,13 +13,18 @@ import {testingRouter} from "./routes/testing-routes";
 
 
 const app = express();
-app.use(cors());
+app.use(
+    cors({
+        credentials: true,
+    }),
+)
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
     extended: true
 }));
-app.use(cookieParser());
 app.set('trust proxy', true)
+app.use(cookieParser());
+
 
 app.use('/auth', authRouter);
 app.use('/users', userRouter);
