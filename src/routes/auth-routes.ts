@@ -73,7 +73,7 @@ authRouter.post('/login',
             const refreshToken = await authServices.createRefreshToken(login)
             return res.cookie('refreshToken', refreshToken,
                 {
-                    maxAge: 20,
+                    maxAge: 20000,
                     httpOnly: true,
                     secure: true
                 }
@@ -97,12 +97,15 @@ authRouter.post('/refresh-token',
         const refreshToken = await authServices.createRefreshToken(userName)
         res.cookie('refreshToken', refreshToken,
             {
-                maxAge: 20,
+                maxAge: 20000,
                 httpOnly: true,
                 secure: true
             }
         )
-            .status(200).json({"accessToken": await authServices.createToken(userName)})
+            .status(200).json({
+            "accessToken": await authServices.createToken(userName),
+            // "refreshTokenInCookies": `is ${req.cookies.refreshToken},`
+        })
         return
     });
 
