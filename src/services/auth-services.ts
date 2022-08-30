@@ -74,7 +74,7 @@ export const authServices = {
                 return false
             }
             const currentToken = await tokensRepository.getToken(refreshToken)
-            if (currentToken) {
+            if (currentToken.isValid) {
                 await tokensRepository.deactivateToken(refreshToken)
                 return currentUser
             } else {

@@ -69,7 +69,7 @@ authRouter.post('/login',
                 return
             }
 
-            const token = await authServices.createToken(login);
+            const accessToken = await authServices.createToken(login);
             const refreshToken = await authServices.createRefreshToken(login)
             return res.cookie('refreshToken', refreshToken,
                 {
@@ -78,11 +78,7 @@ authRouter.post('/login',
                     secure: true
                 }
             )
-                .status(200).json({
-                    "accessToken": token,
-                    // "createdRefreshToken": refreshToken,
-                    // "refreshTokenInCookies": `is ${req.cookies.refreshToken},`
-                })
+                .status(200).send({accessToken})
 
         } catch (error) {
             console.error(error)
@@ -102,10 +98,11 @@ authRouter.post('/refresh-token',
                 secure: true
             }
         )
-            .status(200).send({
-            "accessToken": accessToken,
-            // "refreshTokenInCookies": `is ${req.cookies.refreshToken},`
-        })
+        //     .status(200).send({
+        //     "accessToken": accessToken,
+        //     // "refreshTokenInCookies": `is ${req.cookies.refreshToken},`
+        // })
+            .status(200).send({accessToken})
         return
     });
 
