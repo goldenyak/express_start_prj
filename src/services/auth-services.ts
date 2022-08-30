@@ -67,12 +67,20 @@ export const authServices = {
     // },
 
     async checkRefreshToken(refreshToken: string) {
-        const result: any = jwt.verify(refreshToken, "hgghdgfhd")
-        const currentToken = await tokensRepository.getToken(refreshToken)
-        if (result.userId && currentToken && currentToken.isValid && currentToken.expiresIn > new Date()) {
-            await tokensRepository.deactivateToken(refreshToken)
-            return result.userId
-        } else {
+        try {
+            const result: any = jwt.verify(refreshToken, "hgghdgfhd")
+            const currentUser = await userServices.getUserById(result.userId)
+            if (!currentUser) {
+                return false
+            }
+            const currentToken = await tokensRepository.getToken(refreshToken)
+            if (currentToken) {
+                await tokensRepository.deactivateToken(refreshToken)
+                return currentUser
+            } else {
+                return false
+            }
+        } catch (error) {
             return false
         }
     },

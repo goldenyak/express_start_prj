@@ -111,7 +111,8 @@ authRouter.post('/refresh-token',
 authRouter.post('/logout',
     checkRefreshToken,
     async (req: Request, res: Response) => {
-        await authServices.deactivateToken(req.cookies.refreshToken)
+        // можно удалить т.к. эта логика в checkRefreshToken (middleware)
+        // await authServices.deactivateToken(req.cookies.refreshToken)
         res.sendStatus(204)
         return
     })
