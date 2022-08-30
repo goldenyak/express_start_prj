@@ -102,7 +102,7 @@ authRouter.post('/refresh-token',
             }
         )
             .status(200).json({
-            "accessToken": await authServices.createToken(userName),
+            "accessToken": authServices.createToken(userName),
             // "refreshTokenInCookies": `is ${req.cookies.refreshToken},`
         })
         return
