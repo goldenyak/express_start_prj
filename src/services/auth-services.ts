@@ -80,7 +80,7 @@ export const authServices = {
     async createToken(login: string) {
         const findUser = await usersRepository.getUserByLogin(login)
         if (findUser) {
-            const token = jwt.sign({userId: findUser._id}, "fhdgsmmbxssnxmsnxa", {expiresIn: 10000})
+            const token = jwt.sign({userId: findUser._id}, "fhdgsmmbxssnxmsnxa", {expiresIn: "10s"})
             return token
         }
     },
@@ -88,7 +88,7 @@ export const authServices = {
     async createRefreshToken(login: string) {
         const findUser = await usersRepository.getUserByLogin(login)
         if (findUser) {
-            const refreshToken = jwt.sign({userId: findUser._id}, "hgghdgfhd", {expiresIn: 20000})
+            const refreshToken = jwt.sign({userId: findUser._id}, "hgghdgfhd", {expiresIn: "20s"})
 
             const newRefreshToken: RefreshTokensType = {
                 _id: new ObjectId(),

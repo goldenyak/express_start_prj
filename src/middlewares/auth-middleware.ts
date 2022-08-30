@@ -4,12 +4,11 @@ import {userServices} from "../services/user-services";
 import sub from "date-fns/sub"
 
 export const authMiddleware = async (req: Request, res: Response, next: NextFunction) => {
-    if (!req.headers.authorization) {
-        res.sendStatus(401)
-        return
-    }
-    const authType: string | undefined = req.headers.authorization?.split(" ")[0].toString() || undefined
-    const authPhrase: string = req.headers.authorization?.split(" ")[1].toString()
+    if (!req.headers.authorization) return res.sendStatus(401)
+
+    // const authType: string | undefined = req.headers.authorization?.split(" ")[0].toString() || undefined
+    const authType = req.headers.authorization.split(" ")[0].toString()
+    const authPhrase: string = req.headers.authorization.split(" ")[1].toString()
 
     //Basic auth
     if (authType === 'Basic') {
@@ -27,12 +26,10 @@ export const authMiddleware = async (req: Request, res: Response, next: NextFunc
         const userId = await authServices.checkAuthToken(authPhrase)
         if (userId) {
             req.user = await userServices.getUserById(userId)
-            next()
-            return
+            return next()
         }
     }
-    res.sendStatus(401)
-    return
+    return res.sendStatus(401)
 }
 
 export const isNotSpam = (requestName: string, timeLimit: number = 10, attemptsLimit: number = 5) => {
