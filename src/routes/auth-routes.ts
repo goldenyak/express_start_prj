@@ -93,6 +93,7 @@ authRouter.post('/refresh-token',
     checkRefreshToken,
     async (req: Request, res: Response) => {
         const userName = req.user!.accountData.userName
+        const accessToken = await authServices.createToken(userName)
         const refreshToken = await authServices.createRefreshToken(userName)
         res.cookie('refreshToken', refreshToken,
             {
@@ -101,8 +102,8 @@ authRouter.post('/refresh-token',
                 secure: true
             }
         )
-            .status(200).json({
-            "accessToken": authServices.createToken(userName),
+            .status(200).send({
+            "accessToken": accessToken,
             // "refreshTokenInCookies": `is ${req.cookies.refreshToken},`
         })
         return
