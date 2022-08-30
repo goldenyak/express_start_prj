@@ -97,7 +97,7 @@ authRouter.post('/refresh-token',
         const refreshToken = await authServices.createRefreshToken(userName)
         res.cookie('refreshToken', refreshToken,
             {
-                maxAge: 200000,
+                maxAge: 20,
                 httpOnly: true,
                 secure: true
             }
