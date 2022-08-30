@@ -42,12 +42,29 @@ export const authServices = {
 
     async checkAuthToken(token: string) {
         try {
-            const result: any = jwt.verify(token, "fhdgsmmbxssnxmsnxa")
-            return result.userId
+            const result: any = await jwt.verify(token, "fhdgsmmbxssnxmsnxa")
+            if (result) {
+                return result.userId
+            } else {
+                return null
+            }
         } catch (error) {
             return null
         }
     },
+
+    // async checkAuthToken(token: string) {
+    //     try {
+    //         const result: any = jwt.verify(token, "fhdgsmmbxssnxmsnxa")
+    //         if (result.exp > new Date()) {
+    //             return result.userId
+    //         } else {
+    //             return null
+    //         }
+    //     } catch (error) {
+    //         return null
+    //     }
+    // },
 
     async checkRefreshToken(refreshToken: string) {
         const result: any = jwt.verify(refreshToken, "hgghdgfhd")

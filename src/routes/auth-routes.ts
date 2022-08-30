@@ -120,6 +120,7 @@ authRouter.get('/me',
     authMiddleware,
     (req: Request, res: Response) => {
         const user = req.user
+        // console.log(user)
         res.status(200).json({
             "email": user?.accountData.email,
             "login": user?.accountData.userName,
