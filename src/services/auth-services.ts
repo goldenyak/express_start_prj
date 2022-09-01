@@ -53,19 +53,6 @@ export const authServices = {
         }
     },
 
-    // async checkAuthToken(token: string) {
-    //     try {
-    //         const result: any = jwt.verify(token, "fhdgsmmbxssnxmsnxa")
-    //         if (result.exp > new Date()) {
-    //             return result.userId
-    //         } else {
-    //             return null
-    //         }
-    //     } catch (error) {
-    //         return null
-    //     }
-    // },
-
     async checkRefreshToken(refreshToken: string) {
         try {
             const result: any = jwt.verify(refreshToken, "hgghdgfhd")
@@ -88,7 +75,7 @@ export const authServices = {
     async createToken(login: string) {
         const findUser = await usersRepository.getUserByLogin(login)
         if (findUser) {
-            const token = jwt.sign({userId: findUser._id}, "fhdgsmmbxssnxmsnxa", {expiresIn: "10s"})
+            const token = jwt.sign({userId: findUser._id}, "fhdgsmmbxssnxmsnxa", {expiresIn: "1h"})
             return token
         }
     },
@@ -96,14 +83,14 @@ export const authServices = {
     async createRefreshToken(login: string) {
         const findUser = await usersRepository.getUserByLogin(login)
         if (findUser) {
-            const refreshToken = jwt.sign({userId: findUser._id}, "hgghdgfhd", {expiresIn: "20s"})
+            const refreshToken = jwt.sign({userId: findUser._id}, "hgghdgfhd", {expiresIn: "2h"})
 
             const newRefreshToken: RefreshTokensType = {
                 _id: new ObjectId(),
                 token: refreshToken,
                 isValid: true,
                 expiresIn: add(new Date(), {
-                    seconds: 20
+                    seconds: 200000
                 }),
                 user: findUser._id.toString()
             }
