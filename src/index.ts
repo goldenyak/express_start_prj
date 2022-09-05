@@ -30,10 +30,11 @@ app.use('/comments', commentsRouter);
 app.use('/email', emailRouter)
 app.use('/testing', testingRouter)
 
-const port = process.env.PORT || 5000
+const port = process.env.PORT || 4000
 
 const start = async () => {
     // await mongoose.connect(`mongodb+srv://${DB_USER}:${DB_PASSWORD}@cluster0.pfyw1.mongodb.net/${DB_NAME}?retryWrites=true&w=majority`)
+    console.log(process.env.MONGO_URI)
     await runDb();
     app.listen(port, () => {
         console.log(`Server started on port ${port}`)

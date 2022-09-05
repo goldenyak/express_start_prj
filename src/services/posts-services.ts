@@ -1,6 +1,8 @@
 import {bloggersRepository} from "../repositories/bloggers-repository";
 import {postsRepository} from "../repositories/posts-repository";
 import {ObjectId} from "mongodb";
+import {likesRepository} from "../repositories/likes-repository";
+import {userType} from "../types/user-type";
 
 export const postsServices = {
     async getAllPosts(pageNumber: number, pageSize: number, bloggerId?: string) {
@@ -15,21 +17,23 @@ export const postsServices = {
     },
 
     async getPostById(id: string) {
-        return postsRepository.getPostById(id)
+        return await postsRepository.getPostById(id)
     },
 
     async createNewPost(title: string, shortDescription: string, content: string, bloggerId: string) {
         const blogger = await bloggersRepository.getBloggerById(bloggerId)
-
-        return postsRepository.createNewPost({
+        const newPost = {
             "_id": new ObjectId(),
             "id": Number(new Date()).toString(),
             "title": title,
             "shortDescription": shortDescription,
             "content": content,
             "bloggerId": bloggerId,
-            "bloggerName": blogger?.name || ''
-        })
+            "bloggerName": blogger?.name || '',
+            "addedAt": new Date(),
+        }
+
+        return await postsRepository.createNewPost(newPost)
     },
 
     async updatePostById(id: string, title: string, shortDescription: string, content: string, bloggerId: string) {
@@ -40,7 +44,15 @@ export const postsServices = {
 
     async deletePostById(id: string) {
         return await postsRepository.deletePostById(id)
+    },
 
+    async setLikeStatus(postId: string, likeStatus: string, user: userType) {
+        const newLike = {
+            "userName": user.accountData.userName,
+            postId,
+            "likeStatus": likeStatus
+        }
+        return await likesRepository.setLikeStatus(newLike)
     }
 
 }

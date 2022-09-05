@@ -6,9 +6,10 @@ import {body, validationResult} from "express-validator";
 import {usersRepository} from "../repositories/users-repository";
 import {userLoginValidation} from "../validation/users/user-login-validation";
 import {userEmailValidation} from "../validation/users/user-email-validation";
-import {authMiddleware, isNotSpam} from "../middlewares/auth-middleware";
+import {authMiddleware} from "../middlewares/auth-middleware";
 import {errorsAdapt} from "../utils";
 import {checkRefreshToken} from "../middlewares/check-refresh-token";
+import {isNotSpam} from "../middlewares/check-ip-middleware";
 
 
 export const authRouter = Router({});

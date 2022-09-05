@@ -1,7 +1,7 @@
 import {ObjectId} from "mongodb";
 
 export type commentsType = {
-    "_id": ObjectId,
+    "id": string,
     "content": string,
     "userId": string,
     "userLogin": string,

@@ -15,24 +15,22 @@ export const postsRepository = {
 
         return [countOfPosts, posts]
     },
-    async getPostById(id: string) {
 
+    async getPostById(id: string) {
         const filter = {id: id}
         return await postsCollection.findOne(filter, {projection: {_id: 0}})
-
-        // const findPost = await postsCollection.findOne({id: id}, {projection: {_id: 0}})
-        // return findPost
     },
-    async createNewPost(post: postsType) {
+
+    async createNewPost(newPost: postsType) {
         try {
-            await postsCollection.insertOne(post)
+            await postsCollection.insertOne(newPost)
             return {
-                "id": post.id,
-                "title": post.title,
-                "shortDescription": post.shortDescription,
-                "content": post.content,
-                "bloggerId": post.bloggerId,
-                "bloggerName": post.bloggerName
+                "id": newPost.id,
+                "title": newPost.title,
+                "shortDescription": newPost.shortDescription,
+                "content": newPost.content,
+                "bloggerId": newPost.bloggerId,
+                "bloggerName": newPost.bloggerName
             }
         } catch (error) {
             console.error(error)

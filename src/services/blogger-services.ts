@@ -62,7 +62,8 @@ export const bloggerServices = {
             "shortDescription": shortDescription,
             "content": content,
             "bloggerId": bloggerId,
-            "bloggerName": bloggerById?.name || ''
+            "bloggerName": bloggerById?.name || '',
+            "addedAt": new Date(),
         })
     }
 }

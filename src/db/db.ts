@@ -13,6 +13,7 @@ export const postsCollection = client.db("express-project").collection<postsType
 export const usersCollection = client.db("express-project").collection<userType>("users");
 export const commentsCollection = client.db("express-project").collection<commentsType>("comments");
 export const refreshTokensCollection = client.db("express-project").collection<any>("refreshTokens");
+export const likesCollection = client.db("express-project").collection<any>("likes");
 
 export async function runDb() {
     try {

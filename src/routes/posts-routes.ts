@@ -1,6 +1,6 @@
 import {Request, Response, Router} from 'express'
 import {postIdValidation} from "../validation/posts/post-id-validation";
-import {body, param, query} from "express-validator";
+import {body, param, query, validationResult} from "express-validator";
 import {bloggersRepository} from "../repositories/bloggers-repository";
 import {authMiddleware} from "../middlewares/auth-middleware";
 import {titleValidation} from "../validation/posts/title-validation";
@@ -56,6 +56,22 @@ postsRouter.post('/',
         return;
     })
 
+postsRouter.post('/:postId/comments',
+    authMiddleware,
+    param('postId').isInt(),
+    body('content').trim().notEmpty().isLength({min: 20, max: 300}),
+    postIdValidation,
+    inputValidation,
+    async (req: Request, res: Response) => {
+        const {content} = req.body
+        if (req.user) {
+            res.status(201).send(await commentsServices.createComment(req.params.postId, content, req.user))
+            return
+        }
+        res.sendStatus(401)
+        return
+    })
+
 postsRouter.put('/:id',
     authMiddleware,
     // bloggerIdValidation,
@@ -70,7 +86,6 @@ postsRouter.put('/:id',
     }),
     inputValidation,
     async (req: Request, res: Response) => {
-
         const {title, shortDescription, content, bloggerId} = req.body
         await postsServices.updatePostById(req.params.id, title, shortDescription, content, bloggerId)
         res.sendStatus(204)
@@ -82,9 +97,7 @@ postsRouter.delete('/:id',
     postIdValidation,
     inputValidation,
     async (req: Request, res: Response) => {
-
         await postsServices.deletePostById(req.params.id)
-
         res.sendStatus(204)
         return
     })
@@ -102,16 +115,16 @@ postsRouter.get('/:postId/comments',
         return
     })
 
-postsRouter.post('/:postId/comments',
+postsRouter.put('/:postId/like-status',
     authMiddleware,
-    param('postId').isInt(),
-    body('content').trim().notEmpty().isLength({min: 20, max: 300}),
-    postIdValidation,
+    body('likeStatus').isIn(['Like', 'Dislike', 'None']),
     inputValidation,
     async (req: Request, res: Response) => {
-        const {content} = req.body
+        const {likeStatus} = req.body
+
         if (req.user) {
-            res.status(201).send(await commentsServices.createComment(req.params.postId, content, req.user))
+            await postsServices.setLikeStatus(req.params.postId, likeStatus, req.user)
+            res.sendStatus(204)
             return
         }
         res.sendStatus(401)

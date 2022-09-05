@@ -1,14 +1,11 @@
-import {commentsCollection} from "../db/db";
+import {commentsCollection, postsCollection} from "../db/db";
 import {ObjectId} from "mongodb";
 import {userType} from "../types/user-type";
+import {commentsType} from "../types/comments-type";
 
 export const commentsRepository = {
-    async getAllComments() {
-
-    },
-
-    async createComment(newComment: any) {
-        return await commentsCollection.insertOne(newComment)
+    async createComment(newComment: commentsType) {
+        return await commentsCollection.insertOne({...newComment})
     },
 
     async getCommentsByPostId(postId: string, pageNumber: number, pageSize: number) {
@@ -17,7 +14,7 @@ export const commentsRepository = {
             .limit(pageSize)
             .map(comment => {
                 return {
-                    id: comment._id.toString(),
+                    id: comment.id,
                     content: comment.content,
                     userId: comment.userId,
                     userLogin: comment.userLogin,
@@ -26,33 +23,36 @@ export const commentsRepository = {
             })
             .toArray()
     },
+    //
+    // async getCommentById(id: string) {
+    //     const comments = await commentsCollection.aggregate([
+    //         {
+    //             $match: {
+    //                 _id: new ObjectId(id)
+    //             }
+    //         },
+    //         {
+    //             $project:
+    //                 {
+    //                     "id": {$toString: "$_id"},
+    //                     _id: 0,
+    //                     "content": 1,
+    //                     "userId": 1,
+    //                     "userLogin": 1,
+    //                     "addedAt": 1,
+    //                 }
+    //         },
+    //     ]).toArray()
+    //
+    //     return comments[0]
+    // },
+
 
     async getCommentById(id: string) {
-        const comments = await commentsCollection.aggregate([
-            {
-                $match: {
-                    _id: new ObjectId(id)
-                }
-            },
-            {
-                $project:
-                    {
-                        "id": {$toString: "$_id"},
-                        _id: 0,
-                        "content": 1,
-                        "userId": 1,
-                        "userLogin": 1,
-                        "addedAt": 1
-                    }
-            },
-        ]).toArray()
-
-        return comments[0]
-
-        // const commentById = await commentsCollection.findOne({id: id})
-        // console.log(commentById)
-        // return commentById
-
+        const filter = {id: id}
+        const comment = await commentsCollection.findOne({id}, {projection: {_id: 0}})
+        console.log(comment)
+        return comment
     },
 
     async countComments(postId: string) {

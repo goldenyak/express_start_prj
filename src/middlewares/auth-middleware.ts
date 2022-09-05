@@ -28,20 +28,7 @@ export const authMiddleware = async (req: Request, res: Response, next: NextFunc
             req.user = await userServices.getUserById(userId)
             return next()
         }
+        return res.sendStatus(401)
     }
-    return res.sendStatus(401)
-}
 
-export const isNotSpam = (requestName: string, timeLimit: number = 10, attemptsLimit: number = 5) => {
-    return (req: Request, res: Response, next: NextFunction) => {
-        const logs = userServices.getRequests(requestName, req.ip, sub(new Date(), {seconds: timeLimit}))
-        if(!logs || logs.length < attemptsLimit) {
-            userServices.logRequest(requestName, req.ip, new Date())
-            next()
-            return
-        } else {
-            res.sendStatus(429)
-            return
-        }
-    }
 }
