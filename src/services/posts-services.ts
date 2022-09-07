@@ -46,13 +46,13 @@ export const postsServices = {
         return await postsRepository.deletePostById(id)
     },
 
-    async setLikeStatus(postId: string, likeStatus: string, user: userType) {
-        const newLike = {
-            "userName": user.accountData.userName,
-            postId,
-            "likeStatus": likeStatus
-        }
-        return await likesRepository.setLikeStatus(newLike)
-    }
+    // async setLikeStatus(postId: string, likeStatus: string, user: userType) {
+    //     const newLike = {
+    //         "userName": user.accountData.userName,
+    //         postId,
+    //         "likeStatus": likeStatus
+    //     }
+    //     return await likesRepository.setLikeStatus(newLike)
+    // }
 
 }

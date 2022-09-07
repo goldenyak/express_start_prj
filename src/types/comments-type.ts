@@ -6,5 +6,6 @@ export type commentsType = {
     "userId": string,
     "userLogin": string,
     "addedAt": Date,
-    "postId": string
+    "postId": string,
+    "type": string
 }

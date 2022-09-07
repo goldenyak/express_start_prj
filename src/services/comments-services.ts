@@ -4,20 +4,15 @@ import {ObjectId} from "mongodb";
 import {userType} from "../types/user-type";
 import {likesRepository} from "../repositories/likes-repository";
 import {type} from "os";
+import {LikesType} from "../types/likes-type";
 
 export const commentsServices = {
 
     async getCommentById(id: string) {
         const commentById = await commentsRepository.getCommentById(id)
-        const likesCount = await likesRepository.getLikes(id)
         if (commentById) {
             return ({
-                ...commentById,
-                // "likesInfo": {
-                //     "likesCount": likesCount,
-                //     "dislikesCount": 0,
-                //     "myStatus": "None"
-                // }
+                ...commentById
             })
         } else return null
     },
@@ -43,7 +38,8 @@ export const commentsServices = {
             userId: user._id.toString(),
             userLogin: user.accountData.userName,
             addedAt: new Date(),
-            postId: postId
+            postId: postId,
+            type: "comment"
         }
         await commentsRepository.createComment(newComment)
         return newComment
@@ -82,11 +78,19 @@ export const commentsServices = {
     },
 
     async setLikeStatus(commentId: string, likeStatus: string, user: userType) {
-        const newLike = {
-            "userName": user.accountData.userName,
-            commentId,
-            "likeStatus": likeStatus
+
+        const newLike: LikesType = {
+            "type": "comment",
+            "parrentId": commentId,
+            "likeStatus": likeStatus,
+            "user": user.accountData.userName,
         }
-        return await likesRepository.setLikeStatus(newLike)
+        const currentLikeStatus = await likesRepository.getLikesByCommentId(commentId)
+
+        if (!currentLikeStatus) {
+            return await likesRepository.setLikeStatus(newLike)
+        } else {
+            return await likesRepository.updateLikeStatus(commentId, likeStatus)
+        }
     }
 }

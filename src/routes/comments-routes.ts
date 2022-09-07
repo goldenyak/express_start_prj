@@ -3,9 +3,6 @@ import {commentsServices} from "../services/comments-services";
 import {authMiddleware} from "../middlewares/auth-middleware";
 import {body} from "express-validator";
 import {inputValidation} from "../validation/errors/input-validation";
-import {postsServices} from "../services/posts-services";
-import {commentsType} from "../types/comments-type";
-
 
 export const commentsRouter = Router({})
 
@@ -29,7 +26,6 @@ commentsRouter.put('/:commentId',
     inputValidation,
     async (req: Request, res: Response) => {
         const commentById: any = await commentsServices.getCommentById(req.params.commentId)
-        // console.log(commentById)
         if (commentById) {
             const currentUserId = req.user!._id.toString()
             if (currentUserId === commentById.userId) {
@@ -76,9 +72,10 @@ commentsRouter.put('/:commentId/like-status',
     inputValidation,
     async (req: Request, res: Response) => {
         const {likeStatus} = req.body
+        const {commentId} = req.params
 
         if (req.user) {
-            await commentsServices.setLikeStatus(req.params.commentId, likeStatus, req.user)
+            await commentsServices.setLikeStatus(commentId, likeStatus, req.user)
             res.sendStatus(204)
             return
         }
